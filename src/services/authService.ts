@@ -52,7 +52,7 @@ class AuthService {
     if (!token) return false;
 
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode<{ exp: number }>(token);
       const currentTime = Date.now() / 1000;
       return decoded.exp > currentTime;
     } catch (error) {
@@ -106,10 +106,17 @@ class AuthService {
     if (!token) return null;
 
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode<{
+        exp: number;
+        id?: string;
+        sub?: string;
+        username?: string;
+        email?: string;
+        role?: string;
+      }>(token);
       return {
-        id: decoded.id || decoded.sub,
-        username: decoded.username || decoded.sub,
+        id: decoded.id || decoded.sub || '',
+        username: decoded.username || decoded.sub || '',
         email: decoded.email,
         role: decoded.role,
       };

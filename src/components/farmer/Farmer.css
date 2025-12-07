@@ -1,3 +1,8 @@
+/* CSS Custom Properties */
+:root {
+  --breakpoint-mobile: 768px;
+}
+
 /* Common styles for all pages */
 .page-container {
   max-width: 1200px;
@@ -321,7 +326,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-mobile)) {
   .page-header {
     flex-direction: column;
     align-items: flex-start;

@@ -8,8 +8,10 @@ export const validateEmail = (email: string): boolean => {
 
 // Phone number validation (Sri Lankan format)
 export const validatePhoneNumber = (phone: string): boolean => {
-  const phoneRegex = /^(\+94|0)?[0-9]{9,10}$/;
-  return phoneRegex.test(phone.replace(/\s/g, ''));
+  const cleanPhone = phone.replace(/\s/g, '');
+  // Sri Lankan format: +94 followed by 9 digits, or 0 followed by 9 digits
+  const phoneRegex = /^(\+94[0-9]{9}|0[0-9]{9})$/;
+  return phoneRegex.test(cleanPhone);
 };
 
 // NIC validation (Sri Lankan format)

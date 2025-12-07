@@ -96,6 +96,7 @@
   background-color: #fff;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;

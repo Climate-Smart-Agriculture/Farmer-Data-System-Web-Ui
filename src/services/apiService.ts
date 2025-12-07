@@ -44,6 +44,8 @@ class ApiService {
             }
           } catch (refreshError) {
             authService.logout();
+            // Redirect to login - using window.location as we're in a service layer
+            // In a component, use navigate() from useNavigate() instead
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }

@@ -135,7 +135,7 @@ const FarmerList: React.FC = () => {
                         Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(farmer.id!)}
+                        onClick={() => farmer.id && handleDelete(farmer.id)}
                         className="btn-link danger"
                       >
                         Delete
