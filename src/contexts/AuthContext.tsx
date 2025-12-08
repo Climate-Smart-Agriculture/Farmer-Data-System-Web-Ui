@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import authService from '../services/authService';
-import { User, LoginCredentials } from '../types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import authService from "../services/authService";
+import { User, LoginCredentials } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -15,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -27,6 +33,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated on mount
@@ -35,6 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const currentUser = authService.getCurrentUser();
         setUser(currentUser);
       }
+      setIsInitialized(true);
       setIsLoading(false);
     };
 
@@ -43,10 +51,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (credentials: LoginCredentials) => {
     try {
-      await authService.login(credentials);
-      const currentUser = authService.getCurrentUser();
-      setUser(currentUser);
+      const response = await authService.login(credentials);
+      // Always get user from token after successful login
+      const userData = authService.getCurrentUser();
+      console.log("User data after login:", userData);
+      setUser(userData);
     } catch (error) {
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -58,8 +69,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
-    isAuthenticated: !!user && authService.isAuthenticated(),
-    isLoading,
+    isAuthenticated: authService.isAuthenticated(),
+    isLoading: !isInitialized,
     login,
     logout,
   };

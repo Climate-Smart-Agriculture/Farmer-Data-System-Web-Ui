@@ -1,11 +1,11 @@
-import axios, { AxiosError } from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { LoginCredentials, AuthResponse, User } from '../types';
-import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
+import axios, { AxiosError } from "axios";
+import { jwtDecode } from "jwt-decode";
+import { LoginCredentials, AuthResponse, User } from "../types";
+import { API_CONFIG, API_ENDPOINTS } from "../config/api.config";
 
-const TOKEN_KEY = 'jwt_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const USER_KEY = 'user';
+const TOKEN_KEY = "jwt_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
+const USER_KEY = "user";
 
 class AuthService {
   // Store token in localStorage
@@ -50,7 +50,6 @@ class AuthService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
-
     try {
       const decoded = jwtDecode<{ exp: number }>(token);
       const currentTime = Date.now() / 1000;
@@ -63,34 +62,32 @@ class AuthService {
   // Login
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
+      console.log(
+        "Making login request to:",
+        `${API_CONFIG.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`
+      );
       const response = await axios.post<AuthResponse>(
         `${API_CONFIG.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`,
-        credentials,
-        {
-          headers: API_CONFIG.headers,
-          timeout: API_CONFIG.timeout,
-        }
+        credentials
       );
 
-      const { token, refreshToken, user } = response.data;
+      console.log("Login response:", response.data);
+      const { data } = response.data;
 
-      if (token) {
-        this.setToken(token);
-      }
-
-      if (refreshToken) {
-        this.setRefreshToken(refreshToken);
-      }
-
-      if (user) {
-        this.setUser(user);
+      if (data && data.token) {
+        console.log("Storing token:", data.token);
+        this.setToken(data.token);
+      } else {
+        console.warn("No token in response");
       }
 
       return response.data;
     } catch (error) {
+      console.error("Login request error:", error);
       const axiosError = error as AxiosError<{ message: string }>;
       throw new Error(
-        axiosError.response?.data?.message || 'Login failed. Please check your credentials.'
+        axiosError.response?.data?.message ||
+          "Login failed. Please check your credentials."
       );
     }
   }
@@ -103,7 +100,10 @@ class AuthService {
   // Get current user from token
   getCurrentUser(): User | null {
     const token = this.getToken();
-    if (!token) return null;
+    if (!token) {
+      console.log("No token found");
+      return null;
+    }
 
     try {
       const decoded = jwtDecode<{
@@ -114,13 +114,18 @@ class AuthService {
         email?: string;
         role?: string;
       }>(token);
-      return {
-        id: decoded.id || decoded.sub || '',
-        username: decoded.username || decoded.sub || '',
+      console.log("Decoded token:", decoded);
+
+      const user = {
+        id: decoded.id || decoded.sub || "unknown",
+        username: decoded.username || decoded.sub || "unknown",
         email: decoded.email,
         role: decoded.role,
       };
+      console.log("Returning user:", user);
+      return user;
     } catch (error) {
+      console.error("Error decoding token:", error);
       return null;
     }
   }
@@ -140,7 +145,7 @@ class AuthService {
         }
       );
 
-      const { token } = response.data;
+      const { token } = response.data.data;
       if (token) {
         this.setToken(token);
         return token;

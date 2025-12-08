@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { validateLoginForm } from '../../utils/validation';
-import { FormErrors } from '../../types';
-import './Login.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { validateLoginForm } from "../../utils/validation";
+import { FormErrors } from "../../types";
+import "./Login.css";
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError('');
+    setApiError("");
 
     // Validate form
     const formData = { username, password };
@@ -32,10 +32,14 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
+      console.log("Attempting login...");
       await login({ username, password });
-      navigate('/dashboard');
+      console.log("Login successful, navigating to dashboard...");
+      // Navigate immediately after login completes
+      navigate("/dashboard");
     } catch (error: any) {
-      setApiError(error.message || 'Login failed. Please try again.');
+      console.error("Login error:", error);
+      setApiError(error.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -50,8 +54,10 @@ const Login: React.FC = () => {
         </div>
         <form onSubmit={handleSubmit} className="login-form">
           <h2>Login</h2>
-          
-          {apiError && <div className="error-message api-error">{apiError}</div>}
+
+          {apiError && (
+            <div className="error-message api-error">{apiError}</div>
+          )}
 
           <div className="form-group">
             <label htmlFor="username">Username</label>
@@ -60,10 +66,12 @@ const Login: React.FC = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={errors.username ? 'error' : ''}
+              className={errors.username ? "error" : ""}
               disabled={isLoading}
             />
-            {errors.username && <span className="error-message">{errors.username}</span>}
+            {errors.username && (
+              <span className="error-message">{errors.username}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -73,14 +81,16 @@ const Login: React.FC = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={errors.password ? 'error' : ''}
+              className={errors.password ? "error" : ""}
               disabled={isLoading}
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && (
+              <span className="error-message">{errors.password}</span>
+            )}
           </div>
 
           <button type="submit" className="login-btn" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

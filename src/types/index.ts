@@ -4,10 +4,17 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthResponse {
+export interface AuthResponseData {
   token: string;
-  refreshToken?: string;
-  user?: User;
+  username: string;
+  role?: string;
+  message?: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  data: AuthResponseData;
 }
 
 export interface User {
