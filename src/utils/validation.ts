@@ -1,4 +1,4 @@
-import { FormErrors } from '../types';
+import { FormErrors } from "../types";
 
 // Email validation
 export const validateEmail = (email: string): boolean => {
@@ -8,7 +8,7 @@ export const validateEmail = (email: string): boolean => {
 
 // Phone number validation (Sri Lankan format)
 export const validatePhoneNumber = (phone: string): boolean => {
-  const cleanPhone = phone.replace(/\s/g, '');
+  const cleanPhone = phone.replace(/\s/g, "");
   // Sri Lankan format: +94 followed by 9 digits, or 0 followed by 9 digits
   const phoneRegex = /^(\+94[0-9]{9}|0[0-9]{9})$/;
   return phoneRegex.test(cleanPhone);
@@ -25,7 +25,7 @@ export const validateNIC = (nic: string): boolean => {
 
 // Required field validation
 export const validateRequired = (value: any): boolean => {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value.trim().length > 0;
   }
   if (Array.isArray(value)) {
@@ -35,7 +35,11 @@ export const validateRequired = (value: any): boolean => {
 };
 
 // Number validation
-export const validateNumber = (value: any, min?: number, max?: number): boolean => {
+export const validateNumber = (
+  value: any,
+  min?: number,
+  max?: number
+): boolean => {
   const num = Number(value);
   if (isNaN(num)) return false;
   if (min !== undefined && num < min) return false;
@@ -54,31 +58,27 @@ export const validateFarmerForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.nic)) {
-    errors.nic = 'NIC is required';
+    errors.nic = "NIC is required";
   } else if (!validateNIC(data.nic)) {
-    errors.nic = 'Invalid NIC format';
+    errors.nic = "Invalid NIC format";
   }
 
-  if (!validateRequired(data.firstName)) {
-    errors.firstName = 'First name is required';
-  }
-
-  if (!validateRequired(data.lastName)) {
-    errors.lastName = 'Last name is required';
+  if (!validateRequired(data.fullName)) {
+    errors.fullName = "Full name is required";
   }
 
   if (!validateRequired(data.address)) {
-    errors.address = 'Address is required';
+    errors.address = "Address is required";
   }
 
   if (!validateRequired(data.contactNumber)) {
-    errors.contactNumber = 'Contact number is required';
+    errors.contactNumber = "Contact number is required";
   } else if (!validatePhoneNumber(data.contactNumber)) {
-    errors.contactNumber = 'Invalid phone number format';
+    errors.contactNumber = "Invalid phone number format";
   }
 
   if (data.email && !validateEmail(data.email)) {
-    errors.email = 'Invalid email format';
+    errors.email = "Invalid email format";
   }
 
   return errors;
@@ -89,21 +89,21 @@ export const validateEquipmentForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.farmerId)) {
-    errors.farmerId = 'Farmer must be selected';
+    errors.farmerId = "Farmer must be selected";
   }
 
   if (!validateRequired(data.equipmentType)) {
-    errors.equipmentType = 'Equipment type is required';
+    errors.equipmentType = "Equipment type is required";
   }
 
   if (!validateRequired(data.quantity)) {
-    errors.quantity = 'Quantity is required';
+    errors.quantity = "Quantity is required";
   } else if (!validateNumber(data.quantity, 1)) {
-    errors.quantity = 'Quantity must be at least 1';
+    errors.quantity = "Quantity must be at least 1";
   }
 
   if (data.purchaseDate && !validateDate(data.purchaseDate)) {
-    errors.purchaseDate = 'Invalid date format';
+    errors.purchaseDate = "Invalid date format";
   }
 
   return errors;
@@ -114,21 +114,21 @@ export const validateHomeGardenForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.farmerId)) {
-    errors.farmerId = 'Farmer must be selected';
+    errors.farmerId = "Farmer must be selected";
   }
 
   if (!validateRequired(data.gardenSize)) {
-    errors.gardenSize = 'Garden size is required';
+    errors.gardenSize = "Garden size is required";
   } else if (!validateNumber(data.gardenSize, 0)) {
-    errors.gardenSize = 'Garden size must be a positive number';
+    errors.gardenSize = "Garden size must be a positive number";
   }
 
   if (!validateRequired(data.cropTypes) || data.cropTypes.length === 0) {
-    errors.cropTypes = 'At least one crop type is required';
+    errors.cropTypes = "At least one crop type is required";
   }
 
   if (data.startDate && !validateDate(data.startDate)) {
-    errors.startDate = 'Invalid date format';
+    errors.startDate = "Invalid date format";
   }
 
   return errors;
@@ -139,29 +139,29 @@ export const validateCSAAgricultureForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.farmerId)) {
-    errors.farmerId = 'Farmer must be selected';
+    errors.farmerId = "Farmer must be selected";
   }
 
   if (!validateRequired(data.landSize)) {
-    errors.landSize = 'Land size is required';
+    errors.landSize = "Land size is required";
   } else if (!validateNumber(data.landSize, 0)) {
-    errors.landSize = 'Land size must be a positive number';
+    errors.landSize = "Land size must be a positive number";
   }
 
   if (!validateRequired(data.cropType)) {
-    errors.cropType = 'Crop type is required';
+    errors.cropType = "Crop type is required";
   }
 
   if (!validateRequired(data.season)) {
-    errors.season = 'Season is required';
+    errors.season = "Season is required";
   }
 
   if (data.expectedYield && !validateNumber(data.expectedYield, 0)) {
-    errors.expectedYield = 'Expected yield must be a positive number';
+    errors.expectedYield = "Expected yield must be a positive number";
   }
 
   if (data.actualYield && !validateNumber(data.actualYield, 0)) {
-    errors.actualYield = 'Actual yield must be a positive number';
+    errors.actualYield = "Actual yield must be a positive number";
   }
 
   return errors;
@@ -172,37 +172,37 @@ export const validateAgroWellForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.farmerId)) {
-    errors.farmerId = 'Farmer must be selected';
+    errors.farmerId = "Farmer must be selected";
   }
 
   if (!validateRequired(data.wellType)) {
-    errors.wellType = 'Well type is required';
+    errors.wellType = "Well type is required";
   }
 
   if (!validateRequired(data.depth)) {
-    errors.depth = 'Depth is required';
+    errors.depth = "Depth is required";
   } else if (!validateNumber(data.depth, 0)) {
-    errors.depth = 'Depth must be a positive number';
+    errors.depth = "Depth must be a positive number";
   }
 
   if (data.diameter && !validateNumber(data.diameter, 0)) {
-    errors.diameter = 'Diameter must be a positive number';
+    errors.diameter = "Diameter must be a positive number";
   }
 
   if (data.waterLevel && !validateNumber(data.waterLevel, 0)) {
-    errors.waterLevel = 'Water level must be a positive number';
+    errors.waterLevel = "Water level must be a positive number";
   }
 
   if (!validateRequired(data.usageType)) {
-    errors.usageType = 'Usage type is required';
+    errors.usageType = "Usage type is required";
   }
 
   if (!validateRequired(data.status)) {
-    errors.status = 'Status is required';
+    errors.status = "Status is required";
   }
 
   if (data.constructionDate && !validateDate(data.constructionDate)) {
-    errors.constructionDate = 'Invalid date format';
+    errors.constructionDate = "Invalid date format";
   }
 
   return errors;
@@ -213,29 +213,29 @@ export const validatePoultryForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.farmerId)) {
-    errors.farmerId = 'Farmer must be selected';
+    errors.farmerId = "Farmer must be selected";
   }
 
   if (!validateRequired(data.poultryType)) {
-    errors.poultryType = 'Poultry type is required';
+    errors.poultryType = "Poultry type is required";
   }
 
   if (!validateRequired(data.numberOfBirds)) {
-    errors.numberOfBirds = 'Number of birds is required';
+    errors.numberOfBirds = "Number of birds is required";
   } else if (!validateNumber(data.numberOfBirds, 1)) {
-    errors.numberOfBirds = 'Number of birds must be at least 1';
+    errors.numberOfBirds = "Number of birds must be at least 1";
   }
 
   if (!validateRequired(data.farmingMethod)) {
-    errors.farmingMethod = 'Farming method is required';
+    errors.farmingMethod = "Farming method is required";
   }
 
   if (!validateRequired(data.purpose)) {
-    errors.purpose = 'Purpose is required';
+    errors.purpose = "Purpose is required";
   }
 
   if (data.startDate && !validateDate(data.startDate)) {
-    errors.startDate = 'Invalid date format';
+    errors.startDate = "Invalid date format";
   }
 
   return errors;
@@ -246,11 +246,11 @@ export const validateLoginForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
   if (!validateRequired(data.username)) {
-    errors.username = 'Username is required';
+    errors.username = "Username is required";
   }
 
   if (!validateRequired(data.password)) {
-    errors.password = 'Password is required';
+    errors.password = "Password is required";
   }
 
   return errors;

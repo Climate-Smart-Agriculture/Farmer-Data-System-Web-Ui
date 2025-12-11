@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import farmerService from '../../services/farmerService';
-import { Farmer } from '../../types';
-import './Farmer.css';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import farmerService from "../../services/farmerService";
+import { Farmer } from "../../types";
+import "./Farmer.css";
 
 const FarmerDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -19,27 +19,27 @@ const FarmerDetail: React.FC = () => {
 
   const loadFarmer = async (farmerId: string) => {
     setIsLoading(true);
-    setError('');
+    setError("");
     try {
       const data = await farmerService.getFarmerById(farmerId);
       setFarmer(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to load farmer details');
+      setError(err.message || "Failed to load farmer details");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this farmer?')) {
+    if (!window.confirm("Are you sure you want to delete this farmer?")) {
       return;
     }
 
     try {
       await farmerService.deleteFarmer(id!);
-      navigate('/farmers');
+      navigate("/farmers");
     } catch (err: any) {
-      alert('Failed to delete farmer: ' + err.message);
+      alert("Failed to delete farmer: " + err.message);
     }
   };
 
@@ -78,8 +78,8 @@ const FarmerDetail: React.FC = () => {
               <span>{farmer.nic}</span>
             </div>
             <div className="detail-item">
-              <label>Name:</label>
-              <span>{`${farmer.firstName} ${farmer.lastName}`}</span>
+              <label>Full Name:</label>
+              <span>{`${farmer.fullName}`}</span>
             </div>
             <div className="detail-item">
               <label>Contact Number:</label>
@@ -87,7 +87,19 @@ const FarmerDetail: React.FC = () => {
             </div>
             <div className="detail-item">
               <label>Email:</label>
-              <span>{farmer.email || '-'}</span>
+              <span>{farmer.email || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Gender:</label>
+              <span>{farmer.gender || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Is Samurdhi Beneficiary:</label>
+              <span>{farmer.isSamurdhiBeneficiary ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Is Disabled</label>
+              <span>{farmer.isDisabled ? "Yes" : "No"}</span>
             </div>
           </div>
         </div>
@@ -101,11 +113,11 @@ const FarmerDetail: React.FC = () => {
             </div>
             <div className="detail-item">
               <label>District:</label>
-              <span>{farmer.district || '-'}</span>
+              <span>{farmer.district || "-"}</span>
             </div>
             <div className="detail-item">
-              <label>GS Division:</label>
-              <span>{farmer.gsDivision || '-'}</span>
+              <label>Village Name:</label>
+              <span>{farmer.villageName || "-"}</span>
             </div>
           </div>
         </div>
@@ -116,10 +128,16 @@ const FarmerDetail: React.FC = () => {
             <Link to={`/equipment?farmerId=${id}`} className="btn btn-outline">
               View Equipment
             </Link>
-            <Link to={`/home-gardens?farmerId=${id}`} className="btn btn-outline">
+            <Link
+              to={`/home-gardens?farmerId=${id}`}
+              className="btn btn-outline"
+            >
               View Home Gardens
             </Link>
-            <Link to={`/csa-agriculture?farmerId=${id}`} className="btn btn-outline">
+            <Link
+              to={`/csa-agriculture?farmerId=${id}`}
+              className="btn btn-outline"
+            >
               View CSA Agriculture
             </Link>
             <Link to={`/agro-wells?farmerId=${id}`} className="btn btn-outline">
@@ -133,7 +151,10 @@ const FarmerDetail: React.FC = () => {
       </div>
 
       <div className="form-actions">
-        <button onClick={() => navigate('/farmers')} className="btn btn-outline">
+        <button
+          onClick={() => navigate("/farmers")}
+          className="btn btn-outline"
+        >
           Back to List
         </button>
       </div>

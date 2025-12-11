@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import farmerService from '../../services/farmerService';
-import { Farmer } from '../../types';
-import './Farmer.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import farmerService from "../../services/farmerService";
+import { Farmer } from "../../types";
+import "./Farmer.css";
 
 const FarmerList: React.FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadFarmers();
@@ -16,12 +16,13 @@ const FarmerList: React.FC = () => {
 
   const loadFarmers = async () => {
     setIsLoading(true);
-    setError('');
+    setError("");
     try {
       const response = await farmerService.getAllFarmers(1, 100);
       setFarmers(response.data);
+      console.log("Loaded farmers:", response.data);
     } catch (err: any) {
-      setError(err.message || 'Failed to load farmers');
+      setError(err.message || "Failed to load farmers");
     } finally {
       setIsLoading(false);
     }
@@ -35,19 +36,19 @@ const FarmerList: React.FC = () => {
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
     try {
       const results = await farmerService.searchFarmers(searchQuery);
       setFarmers(results);
     } catch (err: any) {
-      setError(err.message || 'Search failed');
+      setError(err.message || "Search failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this farmer?')) {
+    if (!window.confirm("Are you sure you want to delete this farmer?")) {
       return;
     }
 
@@ -55,7 +56,7 @@ const FarmerList: React.FC = () => {
       await farmerService.deleteFarmer(id);
       loadFarmers();
     } catch (err: any) {
-      alert('Failed to delete farmer: ' + err.message);
+      alert("Failed to delete farmer: " + err.message);
     }
   };
 
@@ -84,7 +85,7 @@ const FarmerList: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                setSearchQuery('');
+                setSearchQuery("");
                 loadFarmers();
               }}
               className="btn btn-outline"
@@ -120,22 +121,30 @@ const FarmerList: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                farmers.map((farmer) => (
-                  <tr key={farmer.id}>
+                farmers.map((farmer, index) => (
+                  <tr key={farmer.farmerId}>
                     <td>{farmer.nic}</td>
-                    <td>{`${farmer.firstName} ${farmer.lastName}`}</td>
+                    <td>{`${farmer.fullName}`}</td>
                     <td>{farmer.contactNumber}</td>
                     <td>{farmer.address}</td>
-                    <td>{farmer.district || '-'}</td>
+                    <td>{farmer.district || "-"}</td>
                     <td className="actions">
-                      <Link to={`/farmers/${farmer.id}`} className="btn-link">
+                      <Link
+                        to={`/farmers/${farmer.farmerId}`}
+                        className="btn-link"
+                      >
                         View
                       </Link>
-                      <Link to={`/farmers/${farmer.id}/edit`} className="btn-link">
+                      <Link
+                        to={`/farmers/${farmer.farmerId}/edit`}
+                        className="btn-link"
+                      >
                         Edit
                       </Link>
                       <button
-                        onClick={() => farmer.id && handleDelete(farmer.id)}
+                        onClick={() =>
+                          farmer.farmerId && handleDelete(farmer.farmerId)
+                        }
                         className="btn-link danger"
                       >
                         Delete

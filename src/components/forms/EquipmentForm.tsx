@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import equipmentService from '../../services/equipmentService';
-import farmerService from '../../services/farmerService';
-import { Equipment, Farmer, FormErrors } from '../../types';
-import { validateEquipmentForm } from '../../utils/validation';
-import '../farmer/Farmer.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import equipmentService from "../../services/equipmentService";
+import farmerService from "../../services/farmerService";
+import { Equipment, Farmer, FormErrors } from "../../types";
+import { validateEquipmentForm } from "../../utils/validation";
+import "../farmer/Farmer.css";
 
 const EquipmentForm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const preselectedFarmerId = searchParams.get('farmerId');
+  const preselectedFarmerId = searchParams.get("farmerId");
 
   const [farmers, setFarmers] = useState<Farmer[]>([]);
   const [formData, setFormData] = useState<Equipment>({
-    farmerId: preselectedFarmerId || '',
-    equipmentType: '',
-    brand: '',
-    model: '',
-    purchaseDate: '',
-    condition: '',
+    farmerId: preselectedFarmerId || "",
+    equipmentType: "",
+    brand: "",
+    model: "",
+    purchaseDate: "",
+    condition: "",
     quantity: 1,
-    notes: '',
+    notes: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     loadFarmers();
@@ -36,21 +36,28 @@ const EquipmentForm: React.FC = () => {
       const response = await farmerService.getAllFarmers(1, 100);
       setFarmers(response.data);
     } catch (err) {
-      setApiError('Failed to load farmers');
+      setApiError("Failed to load farmers");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: name === 'quantity' ? Number(value) : value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "quantity" ? Number(value) : value,
+    }));
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError('');
+    setApiError("");
 
     const validationErrors = validateEquipmentForm(formData);
     if (Object.keys(validationErrors).length > 0) {
@@ -63,9 +70,9 @@ const EquipmentForm: React.FC = () => {
 
     try {
       await equipmentService.createEquipment(formData);
-      navigate('/equipment');
+      navigate("/equipment");
     } catch (err: any) {
-      setApiError(err.message || 'Failed to save equipment');
+      setApiError(err.message || "Failed to save equipment");
     } finally {
       setIsLoading(false);
     }
@@ -88,17 +95,19 @@ const EquipmentForm: React.FC = () => {
               name="farmerId"
               value={formData.farmerId}
               onChange={handleChange}
-              className={errors.farmerId ? 'error' : ''}
+              className={errors.farmerId ? "error" : ""}
               disabled={isLoading}
             >
               <option value="">Select Farmer</option>
               {farmers.map((farmer) => (
-                <option key={farmer.id} value={farmer.id}>
-                  {farmer.nic} - {farmer.firstName} {farmer.lastName}
+                <option key={farmer.farmerId} value={farmer.farmerId}>
+                  {farmer.nic} - {farmer.fullName}
                 </option>
               ))}
             </select>
-            {errors.farmerId && <span className="error-message">{errors.farmerId}</span>}
+            {errors.farmerId && (
+              <span className="error-message">{errors.farmerId}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -109,11 +118,13 @@ const EquipmentForm: React.FC = () => {
               name="equipmentType"
               value={formData.equipmentType}
               onChange={handleChange}
-              className={errors.equipmentType ? 'error' : ''}
+              className={errors.equipmentType ? "error" : ""}
               disabled={isLoading}
               placeholder="e.g., Tractor, Pump, Sprayer"
             />
-            {errors.equipmentType && <span className="error-message">{errors.equipmentType}</span>}
+            {errors.equipmentType && (
+              <span className="error-message">{errors.equipmentType}</span>
+            )}
           </div>
         </div>
 
@@ -150,11 +161,13 @@ const EquipmentForm: React.FC = () => {
               name="quantity"
               value={formData.quantity}
               onChange={handleChange}
-              className={errors.quantity ? 'error' : ''}
+              className={errors.quantity ? "error" : ""}
               disabled={isLoading}
               min="1"
             />
-            {errors.quantity && <span className="error-message">{errors.quantity}</span>}
+            {errors.quantity && (
+              <span className="error-message">{errors.quantity}</span>
+            )}
           </div>
         </div>
 
@@ -167,10 +180,12 @@ const EquipmentForm: React.FC = () => {
               name="purchaseDate"
               value={formData.purchaseDate}
               onChange={handleChange}
-              className={errors.purchaseDate ? 'error' : ''}
+              className={errors.purchaseDate ? "error" : ""}
               disabled={isLoading}
             />
-            {errors.purchaseDate && <span className="error-message">{errors.purchaseDate}</span>}
+            {errors.purchaseDate && (
+              <span className="error-message">{errors.purchaseDate}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -208,14 +223,18 @@ const EquipmentForm: React.FC = () => {
         <div className="form-actions">
           <button
             type="button"
-            onClick={() => navigate('/equipment')}
+            onClick={() => navigate("/equipment")}
             className="btn btn-outline"
             disabled={isLoading}
           >
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Equipment'}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? "Saving..." : "Save Equipment"}
           </button>
         </div>
       </form>

@@ -12,13 +12,18 @@ const FarmerForm: React.FC = () => {
 
   const [formData, setFormData] = useState<Farmer>({
     nic: "",
-    firstName: "",
-    lastName: "",
+    fullName: "",
     address: "",
     contactNumber: "",
     email: "",
+    gender: "",
     district: "",
-    gsDivision: "",
+    villageName: "",
+    ascDivision: "",
+    dsdDivision: "",
+    isDisabled: 0,
+    isWomanHeadedHousehold: 0,
+    isSamurdhiBeneficiary: 0,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -43,13 +48,21 @@ const FarmerForm: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error for this field
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: checked ? 1 : 0 }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Submitting farmer form");
     e.preventDefault();
     setApiError("");
 
@@ -59,14 +72,15 @@ const FarmerForm: React.FC = () => {
       setErrors(validationErrors);
       return;
     }
-
+    console.log("Form data is valid");
     setErrors({});
     setIsLoading(true);
-
+    console.log("Saving farmer data:", formData);
     try {
       if (isEditMode && id) {
         await farmerService.updateFarmer(id, formData);
       } else {
+        console.log("Creating farmer with data:", formData);
         await farmerService.createFarmer(formData);
       }
       navigate("/farmers");
@@ -102,34 +116,18 @@ const FarmerForm: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="firstName">First Name *</label>
+            <label htmlFor="fullName">Full Name *</label>
             <input
               type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
               onChange={handleChange}
-              className={errors.firstName ? "error" : ""}
+              className={errors.fullName ? "error" : ""}
               disabled={isLoading}
             />
-            {errors.firstName && (
-              <span className="error-message">{errors.firstName}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name *</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              className={errors.lastName ? "error" : ""}
-              disabled={isLoading}
-            />
-            {errors.lastName && (
-              <span className="error-message">{errors.lastName}</span>
+            {errors.fullName && (
+              <span className="error-message">{errors.fullName}</span>
             )}
           </div>
         </div>
@@ -184,8 +182,23 @@ const FarmerForm: React.FC = () => {
               <span className="error-message">{errors.email}</span>
             )}
           </div>
-        </div>
 
+          <div className="form-group">
+            <label htmlFor="gender">Gender</label>
+            <input
+              type="text"
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className={errors.gender ? "error" : ""}
+              disabled={isLoading}
+            />
+            {errors.gender && (
+              <span className="error-message">{errors.gender}</span>
+            )}
+          </div>
+        </div>
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="district">District</label>
@@ -200,13 +213,76 @@ const FarmerForm: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="gsDivision">GS Division</label>
+            <label htmlFor="villageName">Village Name</label>
             <input
               type="text"
-              id="gsDivision"
-              name="gsDivision"
-              value={formData.gsDivision}
+              id="villageName"
+              name="villageName"
+              value={formData.villageName}
               onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="ascDivision">ASC Division</label>
+            <input
+              type="text"
+              id="ascDivision"
+              name="ascDivision"
+              value={formData.ascDivision}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="dsdDivision">DSD Division</label>
+            <input
+              type="text"
+              id="dsdDivision"
+              name="dsdDivision"
+              value={formData.dsdDivision}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="isDisabled">Is Disabled</label>
+            <input
+              type="checkbox"
+              id="isDisabled"
+              name="isDisabled"
+              checked={!!formData.isDisabled}
+              onChange={handleCheckboxChange}
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="isWomanHeaded">Is Woman Headed</label>
+            <input
+              type="checkbox"
+              id="isWomanHeadedHousehold"
+              name="isWomanHeadedHousehold"
+              checked={!!formData.isWomanHeadedHousehold}
+              onChange={handleCheckboxChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="isSamurdhiBeneficiary">
+              Is Samurdhi Beneficiary
+            </label>
+            <input
+              type="checkbox"
+              id="isSamurdhiBeneficiary"
+              name="isSamurdhiBeneficiary"
+              checked={!!formData.isSamurdhiBeneficiary}
+              onChange={handleCheckboxChange}
               disabled={isLoading}
             />
           </div>

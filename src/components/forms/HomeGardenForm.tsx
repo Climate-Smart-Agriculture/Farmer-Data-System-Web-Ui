@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import homeGardenService from '../../services/homeGardenService';
-import farmerService from '../../services/farmerService';
-import { HomeGarden, Farmer, FormErrors } from '../../types';
-import { validateHomeGardenForm } from '../../utils/validation';
-import '../farmer/Farmer.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import homeGardenService from "../../services/homeGardenService";
+import farmerService from "../../services/farmerService";
+import { HomeGarden, Farmer, FormErrors } from "../../types";
+import { validateHomeGardenForm } from "../../utils/validation";
+import "../farmer/Farmer.css";
 
 const HomeGardenForm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const preselectedFarmerId = searchParams.get('farmerId');
+  const preselectedFarmerId = searchParams.get("farmerId");
 
   const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [cropTypesInput, setCropTypesInput] = useState('');
+  const [cropTypesInput, setCropTypesInput] = useState("");
   const [formData, setFormData] = useState<HomeGarden>({
-    farmerId: preselectedFarmerId || '',
+    farmerId: preselectedFarmerId || "",
     gardenSize: 0,
     cropTypes: [],
-    irrigationMethod: '',
+    irrigationMethod: "",
     organicFertilizer: false,
     chemicalFertilizer: false,
-    startDate: '',
-    notes: '',
+    startDate: "",
+    notes: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     loadFarmers();
@@ -37,37 +37,49 @@ const HomeGardenForm: React.FC = () => {
       const response = await farmerService.getAllFarmers(1, 100);
       setFarmers(response.data);
     } catch (err) {
-      setApiError('Failed to load farmers');
+      setApiError("Failed to load farmers");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : (name === 'gardenSize' ? Number(value) : value),
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "gardenSize"
+          ? Number(value)
+          : value,
     }));
-    
+
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleCropTypesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCropTypesInput(value);
-    const crops = value.split(',').map(crop => crop.trim()).filter(crop => crop);
+    const crops = value
+      .split(",")
+      .map((crop) => crop.trim())
+      .filter((crop) => crop);
     setFormData((prev) => ({ ...prev, cropTypes: crops }));
     if (errors.cropTypes) {
-      setErrors((prev) => ({ ...prev, cropTypes: '' }));
+      setErrors((prev) => ({ ...prev, cropTypes: "" }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError('');
+    setApiError("");
 
     const validationErrors = validateHomeGardenForm(formData);
     if (Object.keys(validationErrors).length > 0) {
@@ -80,9 +92,9 @@ const HomeGardenForm: React.FC = () => {
 
     try {
       await homeGardenService.createHomeGarden(formData);
-      navigate('/home-gardens');
+      navigate("/home-gardens");
     } catch (err: any) {
-      setApiError(err.message || 'Failed to save home garden');
+      setApiError(err.message || "Failed to save home garden");
     } finally {
       setIsLoading(false);
     }
@@ -105,17 +117,19 @@ const HomeGardenForm: React.FC = () => {
               name="farmerId"
               value={formData.farmerId}
               onChange={handleChange}
-              className={errors.farmerId ? 'error' : ''}
+              className={errors.farmerId ? "error" : ""}
               disabled={isLoading}
             >
               <option value="">Select Farmer</option>
               {farmers.map((farmer) => (
-                <option key={farmer.id} value={farmer.id}>
-                  {farmer.nic} - {farmer.firstName} {farmer.lastName}
+                <option key={farmer.farmerId} value={farmer.farmerId}>
+                  {farmer.nic} - {farmer.fullName}
                 </option>
               ))}
             </select>
-            {errors.farmerId && <span className="error-message">{errors.farmerId}</span>}
+            {errors.farmerId && (
+              <span className="error-message">{errors.farmerId}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -126,12 +140,14 @@ const HomeGardenForm: React.FC = () => {
               name="gardenSize"
               value={formData.gardenSize}
               onChange={handleChange}
-              className={errors.gardenSize ? 'error' : ''}
+              className={errors.gardenSize ? "error" : ""}
               disabled={isLoading}
               min="0"
               step="0.01"
             />
-            {errors.gardenSize && <span className="error-message">{errors.gardenSize}</span>}
+            {errors.gardenSize && (
+              <span className="error-message">{errors.gardenSize}</span>
+            )}
           </div>
         </div>
 
@@ -144,11 +160,13 @@ const HomeGardenForm: React.FC = () => {
               name="cropTypes"
               value={cropTypesInput}
               onChange={handleCropTypesChange}
-              className={errors.cropTypes ? 'error' : ''}
+              className={errors.cropTypes ? "error" : ""}
               disabled={isLoading}
               placeholder="e.g., Tomato, Cabbage, Carrot"
             />
-            {errors.cropTypes && <span className="error-message">{errors.cropTypes}</span>}
+            {errors.cropTypes && (
+              <span className="error-message">{errors.cropTypes}</span>
+            )}
           </div>
         </div>
 
@@ -178,10 +196,12 @@ const HomeGardenForm: React.FC = () => {
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
-              className={errors.startDate ? 'error' : ''}
+              className={errors.startDate ? "error" : ""}
               disabled={isLoading}
             />
-            {errors.startDate && <span className="error-message">{errors.startDate}</span>}
+            {errors.startDate && (
+              <span className="error-message">{errors.startDate}</span>
+            )}
           </div>
         </div>
 
@@ -231,14 +251,18 @@ const HomeGardenForm: React.FC = () => {
         <div className="form-actions">
           <button
             type="button"
-            onClick={() => navigate('/home-gardens')}
+            onClick={() => navigate("/home-gardens")}
             className="btn btn-outline"
             disabled={isLoading}
           >
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Home Garden'}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? "Saving..." : "Save Home Garden"}
           </button>
         </div>
       </form>

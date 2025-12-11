@@ -26,17 +26,20 @@ export interface User {
 
 // Farmer Types
 export interface Farmer {
-  id?: string;
+  farmerId?: string;
   nic: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   address: string;
   contactNumber: string;
   email?: string;
+  gender?: string;
   district?: string;
-  gsDivision?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  villageName?: string;
+  ascDivision?: string;
+  dsdDivision?: string;
+  isDisabled?: number;
+  isWomanHeadedHousehold?: number;
+  isSamurdhiBeneficiary?: number;
 }
 
 // Equipment Types

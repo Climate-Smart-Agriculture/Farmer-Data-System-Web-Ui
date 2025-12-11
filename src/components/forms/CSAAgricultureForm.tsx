@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import csaAgricultureService from '../../services/csaAgricultureService';
-import farmerService from '../../services/farmerService';
-import { CSAAgriculture, Farmer, FormErrors } from '../../types';
-import { validateCSAAgricultureForm } from '../../utils/validation';
-import '../farmer/Farmer.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import csaAgricultureService from "../../services/csaAgricultureService";
+import farmerService from "../../services/farmerService";
+import { CSAAgriculture, Farmer, FormErrors } from "../../types";
+import { validateCSAAgricultureForm } from "../../utils/validation";
+import "../farmer/Farmer.css";
 
 const CSAAgricultureForm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const preselectedFarmerId = searchParams.get('farmerId');
+  const preselectedFarmerId = searchParams.get("farmerId");
 
   const [farmers, setFarmers] = useState<Farmer[]>([]);
   const [formData, setFormData] = useState<CSAAgriculture>({
-    farmerId: preselectedFarmerId || '',
+    farmerId: preselectedFarmerId || "",
     landSize: 0,
-    cropType: '',
-    season: '',
-    irrigationSystem: '',
-    waterSource: '',
-    fertilizationType: '',
+    cropType: "",
+    season: "",
+    irrigationSystem: "",
+    waterSource: "",
+    fertilizationType: "",
     expectedYield: 0,
     actualYield: 0,
-    notes: '',
+    notes: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     loadFarmers();
@@ -38,25 +38,29 @@ const CSAAgricultureForm: React.FC = () => {
       const response = await farmerService.getAllFarmers(1, 100);
       setFarmers(response.data);
     } catch (err) {
-      setApiError('Failed to load farmers');
+      setApiError("Failed to load farmers");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    const numericFields = ['landSize', 'expectedYield', 'actualYield'];
+    const numericFields = ["landSize", "expectedYield", "actualYield"];
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
     }));
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError('');
+    setApiError("");
 
     const validationErrors = validateCSAAgricultureForm(formData);
     if (Object.keys(validationErrors).length > 0) {
@@ -69,9 +73,9 @@ const CSAAgricultureForm: React.FC = () => {
 
     try {
       await csaAgricultureService.createCSAAgriculture(formData);
-      navigate('/csa-agriculture');
+      navigate("/csa-agriculture");
     } catch (err: any) {
-      setApiError(err.message || 'Failed to save CSA agriculture record');
+      setApiError(err.message || "Failed to save CSA agriculture record");
     } finally {
       setIsLoading(false);
     }
@@ -94,17 +98,19 @@ const CSAAgricultureForm: React.FC = () => {
               name="farmerId"
               value={formData.farmerId}
               onChange={handleChange}
-              className={errors.farmerId ? 'error' : ''}
+              className={errors.farmerId ? "error" : ""}
               disabled={isLoading}
             >
               <option value="">Select Farmer</option>
               {farmers.map((farmer) => (
-                <option key={farmer.id} value={farmer.id}>
-                  {farmer.nic} - {farmer.firstName} {farmer.lastName}
+                <option key={farmer.farmerId} value={farmer.farmerId}>
+                  {farmer.nic} - {farmer.fullName}
                 </option>
               ))}
             </select>
-            {errors.farmerId && <span className="error-message">{errors.farmerId}</span>}
+            {errors.farmerId && (
+              <span className="error-message">{errors.farmerId}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -115,12 +121,14 @@ const CSAAgricultureForm: React.FC = () => {
               name="landSize"
               value={formData.landSize}
               onChange={handleChange}
-              className={errors.landSize ? 'error' : ''}
+              className={errors.landSize ? "error" : ""}
               disabled={isLoading}
               min="0"
               step="0.01"
             />
-            {errors.landSize && <span className="error-message">{errors.landSize}</span>}
+            {errors.landSize && (
+              <span className="error-message">{errors.landSize}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -131,11 +139,13 @@ const CSAAgricultureForm: React.FC = () => {
               name="cropType"
               value={formData.cropType}
               onChange={handleChange}
-              className={errors.cropType ? 'error' : ''}
+              className={errors.cropType ? "error" : ""}
               disabled={isLoading}
               placeholder="e.g., Rice, Paddy"
             />
-            {errors.cropType && <span className="error-message">{errors.cropType}</span>}
+            {errors.cropType && (
+              <span className="error-message">{errors.cropType}</span>
+            )}
           </div>
         </div>
 
@@ -147,7 +157,7 @@ const CSAAgricultureForm: React.FC = () => {
               name="season"
               value={formData.season}
               onChange={handleChange}
-              className={errors.season ? 'error' : ''}
+              className={errors.season ? "error" : ""}
               disabled={isLoading}
             >
               <option value="">Select Season</option>
@@ -155,7 +165,9 @@ const CSAAgricultureForm: React.FC = () => {
               <option value="Yala">Yala</option>
               <option value="Off-Season">Off-Season</option>
             </select>
-            {errors.season && <span className="error-message">{errors.season}</span>}
+            {errors.season && (
+              <span className="error-message">{errors.season}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -211,12 +223,14 @@ const CSAAgricultureForm: React.FC = () => {
               name="expectedYield"
               value={formData.expectedYield}
               onChange={handleChange}
-              className={errors.expectedYield ? 'error' : ''}
+              className={errors.expectedYield ? "error" : ""}
               disabled={isLoading}
               min="0"
               step="0.01"
             />
-            {errors.expectedYield && <span className="error-message">{errors.expectedYield}</span>}
+            {errors.expectedYield && (
+              <span className="error-message">{errors.expectedYield}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -227,12 +241,14 @@ const CSAAgricultureForm: React.FC = () => {
               name="actualYield"
               value={formData.actualYield}
               onChange={handleChange}
-              className={errors.actualYield ? 'error' : ''}
+              className={errors.actualYield ? "error" : ""}
               disabled={isLoading}
               min="0"
               step="0.01"
             />
-            {errors.actualYield && <span className="error-message">{errors.actualYield}</span>}
+            {errors.actualYield && (
+              <span className="error-message">{errors.actualYield}</span>
+            )}
           </div>
         </div>
 
@@ -253,14 +269,18 @@ const CSAAgricultureForm: React.FC = () => {
         <div className="form-actions">
           <button
             type="button"
-            onClick={() => navigate('/csa-agriculture')}
+            onClick={() => navigate("/csa-agriculture")}
             className="btn btn-outline"
             disabled={isLoading}
           >
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save CSA Agriculture'}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? "Saving..." : "Save CSA Agriculture"}
           </button>
         </div>
       </form>
