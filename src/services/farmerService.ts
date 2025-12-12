@@ -1,16 +1,38 @@
-import apiService from './apiService';
-import { Farmer, ApiResponse, PaginatedResponse } from '../types';
-import { API_ENDPOINTS } from '../config/api.config';
+import apiService from "./apiService";
+import { FarmerSearch, Farmer, ApiResponse, PaginatedResponse } from "../types";
+import { API_ENDPOINTS } from "../config/api.config";
 
 class FarmerService {
   // Get all farmers
-  async getAllFarmers(page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<Farmer>> {
+  async getAllFarmers(
+    page: number = 1,
+    pageSize: number = 10,
+    filter?: Farmer
+  ): Promise<FarmerSearch> {
     try {
-      return await apiService.get<PaginatedResponse<Farmer>>(
-        `${API_ENDPOINTS.FARMERS.BASE}?page=${page}&pageSize=${pageSize}`
+      const response = await apiService.post<any>(
+        `${API_ENDPOINTS.FARMERS.SEARCH}?page=${page}&pageSize=${pageSize}`,
+        filter
       );
+      console.log("getAllFarmers response:", response);
+
+      // API returns { data: { farmers: [...], totalCount: X }, message: "", success: true }
+      if (
+        response.data &&
+        response.data.farmers &&
+        Array.isArray(response.data.farmers)
+      ) {
+        return response.data;
+      }
+
+      // Fallback to empty array
+      return {
+        farmers: [],
+        totalCount: 0,
+      };
     } catch (error) {
-      throw new Error('Failed to fetch farmers');
+      console.error("Error fetching farmers:", error);
+      throw new Error("Failed to fetch farmers");
     }
   }
 
@@ -23,21 +45,9 @@ class FarmerService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Farmer not found');
+      throw new Error("Farmer not found");
     } catch (error) {
-      throw new Error('Failed to fetch farmer details');
-    }
-  }
-
-  // Search farmers by NIC or name
-  async searchFarmers(query: string): Promise<Farmer[]> {
-    try {
-      const response = await apiService.get<ApiResponse<Farmer[]>>(
-        `${API_ENDPOINTS.FARMERS.SEARCH}?q=${encodeURIComponent(query)}`
-      );
-      return response.data || [];
-    } catch (error) {
-      throw new Error('Failed to search farmers');
+      throw new Error("Failed to fetch farmer details");
     }
   }
 
@@ -51,9 +61,11 @@ class FarmerService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to create farmer');
+      throw new Error("Failed to create farmer");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to create farmer');
+      throw new Error(
+        error.response?.data?.message || "Failed to create farmer"
+      );
     }
   }
 
@@ -67,9 +79,11 @@ class FarmerService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to update farmer');
+      throw new Error("Failed to update farmer");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update farmer');
+      throw new Error(
+        error.response?.data?.message || "Failed to update farmer"
+      );
     }
   }
 
@@ -78,7 +92,7 @@ class FarmerService {
     try {
       await apiService.delete(API_ENDPOINTS.FARMERS.BY_ID(id));
     } catch (error) {
-      throw new Error('Failed to delete farmer');
+      throw new Error("Failed to delete farmer");
     }
   }
 }

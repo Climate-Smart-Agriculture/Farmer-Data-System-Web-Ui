@@ -6,23 +6,42 @@ import "./Farmer.css";
 
 const FarmerList: React.FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchName, setSearchName] = useState("");
+  const [searchDistrict, setSearchDistrict] = useState("");
+  const [searchGender, setSearchGender] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     loadFarmers();
-  }, []);
+  }, [currentPage]);
 
-  const loadFarmers = async () => {
+  const loadFarmers = async (page: number = currentPage) => {
     setIsLoading(true);
     setError("");
     try {
-      const response = await farmerService.getAllFarmers(1, 100);
-      setFarmers(response.data);
-      console.log("Loaded farmers:", response.data);
+      const filter: Farmer = {
+        nic: "",
+        address: "",
+        contactNumber: "",
+        fullName: searchName,
+        district: searchDistrict,
+        gender: searchGender,
+      };
+      const response = await farmerService.getAllFarmers(
+        currentPage - 1,
+        pageSize,
+        filter
+      );
+      setTotalCount(response.totalCount || 0);
+      setFarmers(response.farmers || []);
+      console.log("Loaded farmers:", response.farmers);
     } catch (err: any) {
       setError(err.message || "Failed to load farmers");
+      setFarmers([]);
     } finally {
       setIsLoading(false);
     }
@@ -30,20 +49,11 @@ const FarmerList: React.FC = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchQuery.trim()) {
+    // Reset to first page; useEffect will trigger the load
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
       loadFarmers();
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-    try {
-      const results = await farmerService.searchFarmers(searchQuery);
-      setFarmers(results);
-    } catch (err: any) {
-      setError(err.message || "Search failed");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -73,19 +83,36 @@ const FarmerList: React.FC = () => {
         <form onSubmit={handleSearch} className="search-form">
           <input
             type="text"
-            placeholder="Search by NIC or name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
             className="search-input"
           />
+          {/* Search field for district and dropdown for gender */}
+          <input
+            type="text"
+            placeholder="Search by district..."
+            value={searchDistrict}
+            onChange={(e) => setSearchDistrict(e.target.value)}
+            className="search-input"
+          />
+          <select
+            value={searchGender}
+            onChange={(e) => setSearchGender(e.target.value)}
+            className="search-select"
+          >
+            <option value="">All Genders</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
           <button type="submit" className="btn btn-secondary">
             Search
           </button>
-          {searchQuery && (
+          {searchName && (
             <button
               type="button"
               onClick={() => {
-                setSearchQuery("");
+                setSearchName("");
                 loadFarmers();
               }}
               className="btn btn-outline"
@@ -110,6 +137,7 @@ const FarmerList: React.FC = () => {
                 <th>Contact Number</th>
                 <th>Address</th>
                 <th>District</th>
+                <th>Gender</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -128,6 +156,7 @@ const FarmerList: React.FC = () => {
                     <td>{farmer.contactNumber}</td>
                     <td>{farmer.address}</td>
                     <td>{farmer.district || "-"}</td>
+                    <td>{farmer.gender || "-"}</td>
                     <td className="actions">
                       <Link
                         to={`/farmers/${farmer.farmerId}`}
@@ -155,6 +184,52 @@ const FarmerList: React.FC = () => {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {!isLoading && farmers.length > 0 && (
+        <div className="pagination-controls">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="btn btn-primary"
+          >
+            &nbsp;&lt;&nbsp;
+          </button>
+          <span>
+            Page{" "}
+            <input
+              type="number"
+              max={Math.ceil(totalCount / pageSize)}
+              min={1}
+              value={currentPage}
+              onChange={(e) => {
+                var value = e.target.value.trim();
+                if (value != "") {
+                  var pageNumber = Number(value);
+                  if (pageNumber > Math.ceil(totalCount / pageSize)) {
+                    pageNumber = Math.ceil(totalCount / pageSize);
+                  }
+                  if (pageNumber < 1) {
+                    pageNumber = 1;
+                  }
+                  setCurrentPage(pageNumber);
+                }
+              }}
+            />{" "}
+            of {Math.ceil(totalCount / pageSize)}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1)
+              )
+            }
+            disabled={currentPage === Math.ceil(totalCount / pageSize)}
+            className="btn btn-primary"
+          >
+            &nbsp;&gt;&nbsp;
+          </button>
         </div>
       )}
     </div>

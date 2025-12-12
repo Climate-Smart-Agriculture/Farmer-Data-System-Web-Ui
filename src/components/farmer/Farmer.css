@@ -307,6 +307,13 @@
   border: 1px solid #f5c6cb;
 }
 
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
 /* Checkbox group */
 .checkbox-group {
   display: flex;
@@ -320,7 +327,7 @@
   gap: 0.5rem;
 }
 
-.checkbox-item input[type='checkbox'] {
+.checkbox-item input[type="checkbox"] {
   width: auto;
   margin: 0;
 }

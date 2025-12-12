@@ -34,7 +34,7 @@ const EquipmentForm: React.FC = () => {
   const loadFarmers = async () => {
     try {
       const response = await farmerService.getAllFarmers(1, 100);
-      setFarmers(response.data);
+      setFarmers(response.farmers);
     } catch (err) {
       setApiError("Failed to load farmers");
     }

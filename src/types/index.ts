@@ -42,6 +42,11 @@ export interface Farmer {
   isSamurdhiBeneficiary?: number;
 }
 
+export interface FarmerSearch {
+  totalCount: number;
+  farmers: Farmer[];
+}
+
 // Equipment Types
 export interface Equipment {
   id?: string;
