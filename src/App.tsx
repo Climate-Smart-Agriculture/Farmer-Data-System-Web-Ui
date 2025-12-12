@@ -14,6 +14,7 @@ import CSAAgricultureForm from './components/forms/CSAAgricultureForm';
 import AgroWellForm from './components/forms/AgroWellForm';
 import PoultryForm from './components/forms/PoultryForm';
 import DataList from './components/common/DataList';
+import CSAAgricultureList from './components/forms/CSAAgricultureList';
 import './App.css';
 
 function App() {
@@ -121,9 +122,7 @@ function App() {
             element={
               <PrivateRoute>
                 <Layout>
-                  <DataList title="CSA Agriculture" addNewLink="/csa-agriculture/new">
-                    <p>CSA agriculture records will be displayed here</p>
-                  </DataList>
+                  <CSAAgricultureList />
                 </Layout>
               </PrivateRoute>
             }
