@@ -43,11 +43,13 @@ export const API_ENDPOINTS = {
     BY_FARMER: (farmerId: string) => `/csa-agriculture/farmer/${farmerId}`,
   },
   // Agro Well endpoints
-  AGRO_WELL: {
-    BASE: "/agro-wells",
-    BY_ID: (id: string) => `/agro-wells/${id}`,
-    BY_FARMER: (farmerId: string) => `/agro-wells/farmer/${farmerId}`,
-  },
+// Add this inside API_ENDPOINTS
+AGRICULTURE_FACT: {
+  BASE: "/agriculturefacts",
+  BY_ID: (id: string) => `/agriculturefacts/${id}`,
+  BY_FARMER: (farmerId: string) => `/agriculturefacts/farmer/${farmerId}`,
+},
+
   // Poultry Farming endpoints
   POULTRY: {
     BASE: "/poultry-farming",
