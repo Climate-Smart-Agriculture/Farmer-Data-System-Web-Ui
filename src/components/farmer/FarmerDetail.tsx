@@ -125,25 +125,25 @@ const FarmerDetail: React.FC = () => {
         <div className="detail-section">
           <h3>Associated Data</h3>
           <div className="associated-links">
-            <Link to={`/equipment?farmerId=${id}`} className="btn btn-outline">
+            <Link to={`/equipment?farmerId=${farmer.farmerId}`} className="btn btn-outline">
               View Equipment
             </Link>
             <Link
-              to={`/home-gardens?farmerId=${id}`}
+              to={`/home-gardens?farmerId=${farmer.farmerId}`}
               className="btn btn-outline"
             >
               View Home Gardens
             </Link>
             <Link
-              to={`/csa-agriculture?farmerId=${id}`}
+              to={`/csa-agriculture?farmerId=${farmer.farmerId}`}
               className="btn btn-outline"
             >
               View CSA Agriculture
             </Link>
-            <Link to={`/agro-wells?farmerId=${id}`} className="btn btn-outline">
+            <Link to={`/agro-wells?farmerId=${farmer.farmerId}`} className="btn btn-outline">
               View Agro Wells
             </Link>
-            <Link to={`/poultry?farmerId=${id}`} className="btn btn-outline">
+            <Link to={`/poultry?farmerId=${farmer.farmerId}`} className="btn btn-outline">
               View Poultry Farming
             </Link>
           </div>

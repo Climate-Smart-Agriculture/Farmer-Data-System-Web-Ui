@@ -110,25 +110,42 @@ export const validateEquipmentForm = (data: any): FormErrors => {
 };
 
 // Home Garden form validation
-export const validateHomeGardenForm = (data: any): FormErrors => {
+export const validateHomeGardenForm = (
+  data: any,
+  isEditing: boolean = false
+): FormErrors => {
   const errors: FormErrors = {};
 
-  if (!validateRequired(data.farmerId)) {
-    errors.farmerId = "Farmer must be selected";
+  if (!isEditing && !validateRequired(data.farmerId)) {
+    errors.farmerId = "Farmer ID is required";
   }
 
-  if (!validateRequired(data.gardenSize)) {
-    errors.gardenSize = "Garden size is required";
-  } else if (!validateNumber(data.gardenSize, 0)) {
-    errors.gardenSize = "Garden size must be a positive number";
+  if (!validateRequired(data.year)) {
+    errors.year = "Year is required";
+  } else if (!validateNumber(data.year, 1900, 2100)) {
+    errors.year = "Please enter a valid year";
   }
 
-  if (!validateRequired(data.cropTypes) || data.cropTypes.length === 0) {
-    errors.cropTypes = "At least one crop type is required";
+  if (!validateRequired(data.programName)) {
+    errors.programName = "Program name is required";
   }
 
-  if (data.startDate && !validateDate(data.startDate)) {
-    errors.startDate = "Invalid date format";
+  if (!validateRequired(data.district)) {
+    errors.district = "District is required";
+  }
+
+  if (!validateRequired(data.farmerName)) {
+    errors.farmerName = "Farmer name is required";
+  }
+
+  if (!validateRequired(data.nicNumber)) {
+    errors.nicNumber = "NIC number is required";
+  } else if (!validateNIC(data.nicNumber)) {
+    errors.nicNumber = "Invalid NIC format";
+  }
+
+  if (data.telephoneNumber && !validatePhoneNumber(data.telephoneNumber)) {
+    errors.telephoneNumber = "Invalid phone number format";
   }
 
   return errors;
@@ -212,30 +229,16 @@ export const validateAgroWellForm = (data: any): FormErrors => {
 export const validatePoultryForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
-  if (!validateRequired(data.farmerId)) {
-    errors.farmerId = "Farmer must be selected";
+  if (!validateRequired(data.nicNumber)) {
+    errors.nicNumber = "NIC is required";
   }
 
-  if (!validateRequired(data.poultryType)) {
-    errors.poultryType = "Poultry type is required";
+  if (!validateRequired(data.farmerName)) {
+    errors.farmerName = "Farmer name is required";
   }
 
-  if (!validateRequired(data.numberOfBirds)) {
-    errors.numberOfBirds = "Number of birds is required";
-  } else if (!validateNumber(data.numberOfBirds, 1)) {
-    errors.numberOfBirds = "Number of birds must be at least 1";
-  }
-
-  if (!validateRequired(data.farmingMethod)) {
-    errors.farmingMethod = "Farming method is required";
-  }
-
-  if (!validateRequired(data.purpose)) {
-    errors.purpose = "Purpose is required";
-  }
-
-  if (data.startDate && !validateDate(data.startDate)) {
-    errors.startDate = "Invalid date format";
+  if (!validateRequired(data.district)) {
+    errors.district = "District is required";
   }
 
   return errors;

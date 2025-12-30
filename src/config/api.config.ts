@@ -14,14 +14,15 @@ export const API_ENDPOINTS = {
   // Auth endpoints
   AUTH: {
     LOGIN: "/auth/login",
-    LOGOUT: "/auth/logout",
+    REGISTER: "/auth/register",
     REFRESH: "/auth/refresh",
-    VERIFY: "/auth/verify",
+    HEALTH: "/auth/health",
   },
   // Farmer endpoints
   FARMERS: {
     BASE: "/farmers",
     BY_ID: (id: string) => `/farmers/${id}`,
+    BY_NIC: (nic: string) => `/farmers/nic/${nic}`,
     SEARCH: "/farmers/search",
   },
   // Equipment endpoints
@@ -29,30 +30,35 @@ export const API_ENDPOINTS = {
     BASE: "/equipment",
     BY_ID: (id: string) => `/equipment/${id}`,
     BY_FARMER: (farmerId: string) => `/equipment/farmer/${farmerId}`,
+    SEARCH: "/equipment/search",
   },
   // Home Garden endpoints
   HOME_GARDEN: {
-    BASE: "/home-gardens",
-    BY_ID: (id: string) => `/home-gardens/${id}`,
-    BY_FARMER: (farmerId: string) => `/home-gardens/farmer/${farmerId}`,
+    BASE: "/home-garden",
+    BY_ID: (id: string) => `/home-garden/${id}`,
+    BY_FARMER: (farmerId: string) => `/home-garden/farmer/${farmerId}`,
+    SEARCH: "/home-garden/search",
   },
   // CSA Agriculture endpoints
   CSA_AGRICULTURE: {
     BASE: "/csa-agriculture",
     BY_ID: (id: string) => `/csa-agriculture/${id}`,
     BY_FARMER: (farmerId: string) => `/csa-agriculture/farmer/${farmerId}`,
+    SEARCH: "/csa-agriculture/search",
   },
   // Agro Well endpoints
   AGRO_WELL: {
-    BASE: "/agro-wells",
-    BY_ID: (id: string) => `/agro-wells/${id}`,
-    BY_FARMER: (farmerId: string) => `/agro-wells/farmer/${farmerId}`,
+    BASE: "/agro-well",
+    BY_ID: (id: string) => `/agro-well/${id}`,
+    BY_FARMER: (farmerId: string) => `/agro-well/farmer/${farmerId}`,
+    SEARCH: "/agro-well/search",
   },
   // Poultry Farming endpoints
   POULTRY: {
     BASE: "/poultry-farming",
     BY_ID: (id: string) => `/poultry-farming/${id}`,
     BY_FARMER: (farmerId: string) => `/poultry-farming/farmer/${farmerId}`,
+    SEARCH: "/poultry-farming/search",
   },
 };
 

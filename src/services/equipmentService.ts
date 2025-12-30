@@ -1,8 +1,24 @@
-import apiService from './apiService';
-import { Equipment, ApiResponse } from '../types';
-import { API_ENDPOINTS } from '../config/api.config';
+import apiService from "./apiService";
+import { Equipment, EquipmentSearch, ApiResponse } from "../types";
+import { API_ENDPOINTS } from "../config/api.config";
 
 class EquipmentService {
+  async getAllEquipments(
+    page: number = 1,
+    pageSize: number = 10,
+    filter?: Partial<Equipment>
+  ): Promise<EquipmentSearch> {
+    try {
+      const response = await apiService.post<ApiResponse<EquipmentSearch>>(
+        `${API_ENDPOINTS.EQUIPMENT.SEARCH}?page=${page}&pageSize=${pageSize}`,
+        filter || {}
+      );
+      return response.data || { totalCount: 0, equipmentData: [] };
+    } catch (error) {
+      throw new Error("Failed to fetch equipment data");
+    }
+  }
+
   async getEquipmentByFarmer(farmerId: string): Promise<Equipment[]> {
     try {
       const response = await apiService.get<ApiResponse<Equipment[]>>(
@@ -10,7 +26,7 @@ class EquipmentService {
       );
       return response.data || [];
     } catch (error) {
-      throw new Error('Failed to fetch equipment');
+      throw new Error("Failed to fetch equipment");
     }
   }
 
@@ -22,9 +38,9 @@ class EquipmentService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Equipment not found');
+      throw new Error("Equipment not found");
     } catch (error) {
-      throw new Error('Failed to fetch equipment details');
+      throw new Error("Failed to fetch equipment details");
     }
   }
 
@@ -37,13 +53,18 @@ class EquipmentService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to create equipment');
+      throw new Error("Failed to create equipment");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to create equipment');
+      throw new Error(
+        error.response?.data?.message || "Failed to create equipment"
+      );
     }
   }
 
-  async updateEquipment(id: string, equipment: Partial<Equipment>): Promise<Equipment> {
+  async updateEquipment(
+    id: string,
+    equipment: Partial<Equipment>
+  ): Promise<Equipment> {
     try {
       const response = await apiService.put<ApiResponse<Equipment>>(
         API_ENDPOINTS.EQUIPMENT.BY_ID(id),
@@ -52,9 +73,11 @@ class EquipmentService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to update equipment');
+      throw new Error("Failed to update equipment");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update equipment');
+      throw new Error(
+        error.response?.data?.message || "Failed to update equipment"
+      );
     }
   }
 
@@ -62,7 +85,7 @@ class EquipmentService {
     try {
       await apiService.delete(API_ENDPOINTS.EQUIPMENT.BY_ID(id));
     } catch (error) {
-      throw new Error('Failed to delete equipment');
+      throw new Error("Failed to delete equipment");
     }
   }
 }

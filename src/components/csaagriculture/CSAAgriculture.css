@@ -1,0 +1,63 @@
+/* CSA Agriculture Component Styles */
+.csa-agriculture-container {
+  padding: 20px;
+}
+
+.csa-agriculture-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.csa-agriculture-header h1 {
+  margin: 0;
+  color: #2c5f2d;
+}
+
+/* Table specific styles for CSA Agriculture */
+.csa-table {
+  min-width: 2000px; /* Wide table for many columns */
+}
+
+.csa-table th,
+.csa-table td {
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+/* CSA Indicators section */
+.csa-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.csa-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.csa-indicator-badge.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.csa-indicator-badge.inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .csa-agriculture-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}

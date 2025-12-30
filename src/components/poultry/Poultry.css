@@ -1,0 +1,10 @@
+/* Poultry Farming specific styles */
+.poultry-section {
+  margin-bottom: 1.5rem;
+}
+
+.poultry-section h4 {
+  color: #333;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}

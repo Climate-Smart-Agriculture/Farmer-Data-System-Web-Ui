@@ -1,8 +1,35 @@
-import apiService from './apiService';
-import { HomeGarden, ApiResponse } from '../types';
-import { API_ENDPOINTS } from '../config/api.config';
+import apiService from "./apiService";
+import { HomeGarden, HomeGardenSearch, ApiResponse } from "../types";
+import { API_ENDPOINTS } from "../config/api.config";
 
 class HomeGardenService {
+  async getAllHomeGardens(
+    page: number = 0,
+    pageSize: number = 10,
+    filter?: HomeGarden
+  ): Promise<HomeGardenSearch> {
+    try {
+      const response = await apiService.post<any>(
+        `${API_ENDPOINTS.HOME_GARDEN.SEARCH}?page=${page}&pageSize=${pageSize}`,
+        filter
+      );
+      if (
+        response.data &&
+        response.data.homeGardens &&
+        Array.isArray(response.data.homeGardens)
+      ) {
+        return response.data;
+      }
+      return {
+        homeGardens: [],
+        totalCount: 0,
+      };
+    } catch (error) {
+      console.error("Error fetching home gardens:", error);
+      throw new Error("Failed to fetch home gardens");
+    }
+  }
+
   async getHomeGardensByFarmer(farmerId: string): Promise<HomeGarden[]> {
     try {
       const response = await apiService.get<ApiResponse<HomeGarden[]>>(
@@ -10,7 +37,7 @@ class HomeGardenService {
       );
       return response.data || [];
     } catch (error) {
-      throw new Error('Failed to fetch home gardens');
+      throw new Error("Failed to fetch home gardens");
     }
   }
 
@@ -22,9 +49,9 @@ class HomeGardenService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Home garden not found');
+      throw new Error("Home garden not found");
     } catch (error) {
-      throw new Error('Failed to fetch home garden details');
+      throw new Error("Failed to fetch home garden details");
     }
   }
 
@@ -37,13 +64,18 @@ class HomeGardenService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to create home garden');
+      throw new Error("Failed to create home garden");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to create home garden');
+      throw new Error(
+        error.response?.data?.message || "Failed to create home garden"
+      );
     }
   }
 
-  async updateHomeGarden(id: string, homeGarden: Partial<HomeGarden>): Promise<HomeGarden> {
+  async updateHomeGarden(
+    id: string,
+    homeGarden: Partial<HomeGarden>
+  ): Promise<HomeGarden> {
     try {
       const response = await apiService.put<ApiResponse<HomeGarden>>(
         API_ENDPOINTS.HOME_GARDEN.BY_ID(id),
@@ -52,9 +84,11 @@ class HomeGardenService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to update home garden');
+      throw new Error("Failed to update home garden");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update home garden');
+      throw new Error(
+        error.response?.data?.message || "Failed to update home garden"
+      );
     }
   }
 
@@ -62,7 +96,7 @@ class HomeGardenService {
     try {
       await apiService.delete(API_ENDPOINTS.HOME_GARDEN.BY_ID(id));
     } catch (error) {
-      throw new Error('Failed to delete home garden');
+      throw new Error("Failed to delete home garden");
     }
   }
 }

@@ -1,0 +1,70 @@
+/* Home Garden specific styles - extends Farmer.css styles */
+
+/* Import shared styles from Farmer.css */
+@import "../farmer/Farmer.css";
+
+/* Home Garden Table - handle many columns */
+.home-garden-table {
+  min-width: 2000px;
+}
+
+.home-garden-table th,
+.home-garden-table td {
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.home-garden-table .col-narrow {
+  min-width: 80px;
+}
+
+.home-garden-table .col-wide {
+  min-width: 150px;
+}
+
+/* Scrollable table container */
+.table-scroll-container {
+  overflow-x: auto;
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Column visibility toggle */
+.column-toggle-container {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.column-toggle-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+.column-toggle-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.column-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.column-toggle-item:hover {
+  background: #e9ecef;
+}
+
+.column-toggle-item input {
+  cursor: pointer;
+}

@@ -4,16 +4,84 @@ import farmerService from "../../services/farmerService";
 import { Farmer } from "../../types";
 import "./Farmer.css";
 
+interface FilterOption {
+  key: string;
+  label: string;
+  type: "text" | "select";
+  options?: { value: string; label: string }[];
+}
+
+const FILTER_OPTIONS: FilterOption[] = [
+  { key: "nic", label: "NIC", type: "text" },
+  { key: "fullName", label: "Name", type: "text" },
+  { key: "address", label: "Address", type: "text" },
+  { key: "contactNumber", label: "Contact Number", type: "text" },
+  { key: "email", label: "Email", type: "text" },
+  {
+    key: "gender",
+    label: "Gender",
+    type: "select",
+    options: [
+      { value: "", label: "All Genders" },
+      { value: "M", label: "Male" },
+      { value: "F", label: "Femal e" },
+    ],
+  },
+  { key: "district", label: "District", type: "text" },
+  { key: "villageName", label: "Village Name", type: "text" },
+  { key: "ascDivision", label: "ASC Division", type: "text" },
+  { key: "dsdDivision", label: "DSD Division", type: "text" },
+  {
+    key: "isDisabled",
+    label: "Disabled",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
+  {
+    key: "isWomanHeadedHousehold",
+    label: "Woman Headed Household",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
+  {
+    key: "isSamurdhiBeneficiary",
+    label: "Samurdhi Beneficiary",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
+];
+
+interface FilterValues {
+  [key: string]: string;
+}
+
 const FarmerList: React.FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [searchName, setSearchName] = useState("");
-  const [searchDistrict, setSearchDistrict] = useState("");
-  const [searchGender, setSearchGender] = useState("");
+  const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [visibleFilters, setVisibleFilters] = useState<string[]>([
+    "nic",
+    "fullName",
+    "address",
+    "district",
+  ]);
+  const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
   useEffect(() => {
     loadFarmers();
@@ -24,12 +92,25 @@ const FarmerList: React.FC = () => {
     setError("");
     try {
       const filter: Farmer = {
-        nic: "",
-        address: "",
-        contactNumber: "",
-        fullName: searchName,
-        district: searchDistrict,
-        gender: searchGender,
+        nic: filterValues.nic || "",
+        fullName: filterValues.fullName || "",
+        address: filterValues.address || "",
+        contactNumber: filterValues.contactNumber || "",
+        email: filterValues.email || "",
+        gender: filterValues.gender || "",
+        district: filterValues.district || "",
+        villageName: filterValues.villageName || "",
+        ascDivision: filterValues.ascDivision || "",
+        dsdDivision: filterValues.dsdDivision || "",
+        isDisabled: filterValues.isDisabled
+          ? Number(filterValues.isDisabled)
+          : undefined,
+        isWomanHeadedHousehold: filterValues.isWomanHeadedHousehold
+          ? Number(filterValues.isWomanHeadedHousehold)
+          : undefined,
+        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
+          ? Number(filterValues.isSamurdhiBeneficiary)
+          : undefined,
       };
       const response = await farmerService.getAllFarmers(
         currentPage - 1,
@@ -70,6 +151,28 @@ const FarmerList: React.FC = () => {
     }
   };
 
+  const toggleFilterVisibility = (filterKey: string) => {
+    setVisibleFilters((prev) => {
+      if (prev.includes(filterKey)) {
+        // Remove filter and clear its value
+        setFilterValues((prevValues) => {
+          const newValues = { ...prevValues };
+          delete newValues[filterKey];
+          return newValues;
+        });
+        return prev.filter((key) => key !== filterKey);
+      } else {
+        return [...prev, filterKey];
+      }
+    });
+  };
+
+  const updateFilterValue = (key: string, value: string) => {
+    setFilterValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -81,38 +184,69 @@ const FarmerList: React.FC = () => {
 
       <div className="search-container">
         <form onSubmit={handleSearch} className="search-form">
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            className="search-input"
-          />
-          {/* Search field for district and dropdown for gender */}
-          <input
-            type="text"
-            placeholder="Search by district..."
-            value={searchDistrict}
-            onChange={(e) => setSearchDistrict(e.target.value)}
-            className="search-input"
-          />
-          <select
-            value={searchGender}
-            onChange={(e) => setSearchGender(e.target.value)}
-            className="search-select"
-          >
-            <option value="">All Genders</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
+          {FILTER_OPTIONS.filter((opt) => visibleFilters.includes(opt.key)).map(
+            (option) => (
+              <div key={option.key} className="filter-field">
+                <label className="filter-label">{option.label}</label>
+                {option.type === "text" ? (
+                  <input
+                    type="text"
+                    placeholder={`Search by ${option.label.toLowerCase()}...`}
+                    value={filterValues[option.key] || ""}
+                    onChange={(e) =>
+                      updateFilterValue(option.key, e.target.value)
+                    }
+                    className="search-input"
+                  />
+                ) : (
+                  <select
+                    value={filterValues[option.key] || ""}
+                    onChange={(e) =>
+                      updateFilterValue(option.key, e.target.value)
+                    }
+                    className="search-select"
+                  >
+                    {option.options?.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )
+          )}
+          <div className="more-dropdown-container">
+            <button
+              type="button"
+              className="btn btn-outline more-dropdown-trigger"
+              onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+            >
+              More ▼
+            </button>
+            {isMoreDropdownOpen && (
+              <div className="more-dropdown-menu">
+                {FILTER_OPTIONS.map((option) => (
+                  <label key={option.key} className="more-dropdown-item">
+                    <input
+                      type="checkbox"
+                      checked={visibleFilters.includes(option.key)}
+                      onChange={() => toggleFilterVisibility(option.key)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
           <button type="submit" className="btn btn-secondary">
             Search
           </button>
-          {searchName && (
+          {hasActiveFilters && (
             <button
               type="button"
               onClick={() => {
-                setSearchName("");
+                setFilterValues({});
                 loadFarmers();
               }}
               className="btn btn-outline"
@@ -134,17 +268,24 @@ const FarmerList: React.FC = () => {
               <tr>
                 <th>NIC</th>
                 <th>Name</th>
-                <th>Contact Number</th>
                 <th>Address</th>
-                <th>District</th>
+                <th>Contact</th>
+                <th>Email</th>
                 <th>Gender</th>
+                <th>District</th>
+                <th>Village</th>
+                <th>ASC Div</th>
+                <th>DSD Div</th>
+                <th>Disabled</th>
+                <th>Woman Headed</th>
+                <th>Samurdhi</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {farmers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="no-data">
+                  <td colSpan={14} className="no-data">
                     No farmers found
                   </td>
                 </tr>
@@ -152,11 +293,36 @@ const FarmerList: React.FC = () => {
                 farmers.map((farmer, index) => (
                   <tr key={farmer.farmerId}>
                     <td>{farmer.nic}</td>
-                    <td>{`${farmer.fullName}`}</td>
-                    <td>{farmer.contactNumber}</td>
+                    <td>{farmer.fullName}</td>
                     <td>{farmer.address}</td>
-                    <td>{farmer.district || "-"}</td>
+                    <td>{farmer.contactNumber}</td>
+                    <td>{farmer.email || "-"}</td>
                     <td>{farmer.gender || "-"}</td>
+                    <td>{farmer.district || "-"}</td>
+                    <td>{farmer.villageName || "-"}</td>
+                    <td>{farmer.ascDivision || "-"}</td>
+                    <td>{farmer.dsdDivision || "-"}</td>
+                    <td>
+                      {farmer.isDisabled === 1
+                        ? "Yes"
+                        : farmer.isDisabled === 0
+                        ? "No"
+                        : "-"}
+                    </td>
+                    <td>
+                      {farmer.isWomanHeadedHousehold === 1
+                        ? "Yes"
+                        : farmer.isWomanHeadedHousehold === 0
+                        ? "No"
+                        : "-"}
+                    </td>
+                    <td>
+                      {farmer.isSamurdhiBeneficiary === 1
+                        ? "Yes"
+                        : farmer.isSamurdhiBeneficiary === 0
+                        ? "No"
+                        : "-"}
+                    </td>
                     <td className="actions">
                       <Link
                         to={`/farmers/${farmer.farmerId}`}

@@ -1,8 +1,24 @@
-import apiService from './apiService';
-import { PoultryFarming, ApiResponse } from '../types';
-import { API_ENDPOINTS } from '../config/api.config';
+import apiService from "./apiService";
+import { PoultryFarming, PoultryFarmingSearch, ApiResponse } from "../types";
+import { API_ENDPOINTS } from "../config/api.config";
 
 class PoultryService {
+  async getAllPoultry(
+    page: number,
+    pageSize: number,
+    filter?: Partial<PoultryFarming>
+  ): Promise<PoultryFarmingSearch> {
+    try {
+      const response = await apiService.post<ApiResponse<PoultryFarmingSearch>>(
+        `${API_ENDPOINTS.POULTRY.SEARCH}?page=${page}&pageSize=${pageSize}`,
+        filter || {}
+      );
+      return response.data || { totalCount: 0, poultryFarmingData: [] };
+    } catch (error) {
+      throw new Error("Failed to fetch poultry farming records");
+    }
+  }
+
   async getPoultryByFarmer(farmerId: string): Promise<PoultryFarming[]> {
     try {
       const response = await apiService.get<ApiResponse<PoultryFarming[]>>(
@@ -10,7 +26,7 @@ class PoultryService {
       );
       return response.data || [];
     } catch (error) {
-      throw new Error('Failed to fetch poultry farming records');
+      throw new Error("Failed to fetch poultry farming records");
     }
   }
 
@@ -22,9 +38,9 @@ class PoultryService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Poultry farming record not found');
+      throw new Error("Poultry farming record not found");
     } catch (error) {
-      throw new Error('Failed to fetch poultry farming details');
+      throw new Error("Failed to fetch poultry farming details");
     }
   }
 
@@ -37,13 +53,19 @@ class PoultryService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to create poultry farming record');
+      throw new Error("Failed to create poultry farming record");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to create poultry farming record');
+      throw new Error(
+        error.response?.data?.message ||
+          "Failed to create poultry farming record"
+      );
     }
   }
 
-  async updatePoultry(id: string, poultry: Partial<PoultryFarming>): Promise<PoultryFarming> {
+  async updatePoultry(
+    id: string,
+    poultry: Partial<PoultryFarming>
+  ): Promise<PoultryFarming> {
     try {
       const response = await apiService.put<ApiResponse<PoultryFarming>>(
         API_ENDPOINTS.POULTRY.BY_ID(id),
@@ -52,9 +74,12 @@ class PoultryService {
       if (response.data) {
         return response.data;
       }
-      throw new Error('Failed to update poultry farming record');
+      throw new Error("Failed to update poultry farming record");
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update poultry farming record');
+      throw new Error(
+        error.response?.data?.message ||
+          "Failed to update poultry farming record"
+      );
     }
   }
 
@@ -62,7 +87,7 @@ class PoultryService {
     try {
       await apiService.delete(API_ENDPOINTS.POULTRY.BY_ID(id));
     } catch (error) {
-      throw new Error('Failed to delete poultry farming record');
+      throw new Error("Failed to delete poultry farming record");
     }
   }
 }
