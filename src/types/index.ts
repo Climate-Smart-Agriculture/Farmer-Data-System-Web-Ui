@@ -153,3 +153,38 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
+
+export interface AgricultureFact {
+  recordId?: number;
+  seasonMonth: string;
+  district: string;
+  dsdDivision: string;
+  ascDivision: string;
+  cascadeName: string;
+  tankOrVisName: string;
+  producerSociety: string;
+  farmerOrganizationName: string;
+  aiRange: string;
+  gnd: string;
+  nameofthefarmer: string;
+  address: string;
+  idno: string;
+  telephoneno: string;
+  female: string;
+  male: string;
+  samurdhi: string;
+  womanhead: string;
+  disable: string;
+  cropcultivated: string;
+  isReplicatedCrop: number;
+  extentHa: number;
+  noOfPlant: number;
+  commandAreaHa: number;
+  totalCultivationCostRs: number;
+  agrowellDepreciationPerSeasonCostRs: number;
+  totalcost: number;
+  yieldKg: number;
+  incomeRs: number;
+  netIncomeRs: number;
+  irrigationmethod: number;
+}

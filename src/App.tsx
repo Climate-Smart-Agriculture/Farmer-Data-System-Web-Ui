@@ -11,7 +11,7 @@ import FarmerDetail from './components/farmer/FarmerDetail';
 import EquipmentForm from './components/forms/EquipmentForm';
 import HomeGardenForm from './components/forms/HomeGardenForm';
 import CSAAgricultureForm from './components/forms/CSAAgricultureForm';
-import AgroWellForm from './components/forms/AgroWellForm';
+import AgricultureFactForm from './components/forms/AgroWellForm';
 import PoultryForm from './components/forms/PoultryForm';
 import DataList from './components/common/DataList';
 import './App.css';
@@ -155,7 +155,7 @@ function App() {
             element={
               <PrivateRoute>
                 <Layout>
-                  <AgroWellForm />
+                  <AgricultureFactForm />
                 </Layout>
               </PrivateRoute>
             }

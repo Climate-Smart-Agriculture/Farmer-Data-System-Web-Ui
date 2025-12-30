@@ -1,71 +1,28 @@
-import apiService from './apiService';
-import { AgroWell, ApiResponse } from '../types';
-import { API_ENDPOINTS } from '../config/api.config';
+import apiService from "./apiService";
+import { AgricultureFact } from "../types";
+import { API_ENDPOINTS } from "../config/api.config";
+import { AxiosResponse } from "axios";
 
 class AgroWellService {
-  async getAgroWellsByFarmer(farmerId: string): Promise<AgroWell[]> {
+  async createAgricultureFact(data: AgricultureFact): Promise<AgricultureFact> {
     try {
-      const response = await apiService.get<ApiResponse<AgroWell[]>>(
-        API_ENDPOINTS.AGRO_WELL.BY_FARMER(farmerId)
+      const response: AxiosResponse<AgricultureFact> = await apiService.post(
+        API_ENDPOINTS.AGRICULTURE_FACT.BASE,
+        data
       );
-      return response.data || [];
-    } catch (error) {
-      throw new Error('Failed to fetch agro wells');
-    }
-  }
 
-  async getAgroWellById(id: string): Promise<AgroWell> {
-    try {
-      const response = await apiService.get<ApiResponse<AgroWell>>(
-        API_ENDPOINTS.AGRO_WELL.BY_ID(id)
-      );
-      if (response.data) {
-        return response.data;
-      }
-      throw new Error('Agro well not found');
-    } catch (error) {
-      throw new Error('Failed to fetch agro well details');
-    }
-  }
-
-  async createAgroWell(agroWell: AgroWell): Promise<AgroWell> {
-    try {
-      const response = await apiService.post<ApiResponse<AgroWell>>(
-        API_ENDPOINTS.AGRO_WELL.BASE,
-        agroWell
-      );
-      if (response.data) {
-        return response.data;
-      }
-      throw new Error('Failed to create agro well');
+      console.log("Agriculture fact created:", response.data);
+      return response.data; // ✅ response.data is the actual record
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to create agro well');
-    }
-  }
-
-  async updateAgroWell(id: string, agroWell: Partial<AgroWell>): Promise<AgroWell> {
-    try {
-      const response = await apiService.put<ApiResponse<AgroWell>>(
-        API_ENDPOINTS.AGRO_WELL.BY_ID(id),
-        agroWell
+      throw new Error(
+        error.response?.data?.message || "Failed to create agriculture fact"
       );
-      if (response.data) {
-        return response.data;
-      }
-      throw new Error('Failed to update agro well');
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update agro well');
     }
   }
 
-  async deleteAgroWell(id: string): Promise<void> {
-    try {
-      await apiService.delete(API_ENDPOINTS.AGRO_WELL.BY_ID(id));
-    } catch (error) {
-      throw new Error('Failed to delete agro well');
-    }
+  async deleteAgricultureFact(id: string): Promise<void> {
+    await apiService.delete(API_ENDPOINTS.AGRICULTURE_FACT.BY_ID(id));
   }
 }
 
-const agroWellService = new AgroWellService();
-export default agroWellService;
+export default new AgroWellService();

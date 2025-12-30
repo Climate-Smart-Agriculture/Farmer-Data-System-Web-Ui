@@ -255,3 +255,106 @@ export const validateLoginForm = (data: any): FormErrors => {
 
   return errors;
 };
+
+// Agriculture Fact form validation
+export const validateAgricultureForm = (data: any): FormErrors => {
+  const errors: FormErrors = {};
+
+  // --- Program / Location details ---
+  if (!validateRequired(data.seasonMonth)) {
+    errors.seasonMonth = "Season / Month is required";
+  }
+
+  if (!validateRequired(data.district)) {
+    errors.district = "District is required";
+  }
+
+  if (!validateRequired(data.dsdDivision)) {
+    errors.dsdDivision = "DSD Division is required";
+  }
+
+  if (!validateRequired(data.ascDivision)) {
+    errors.ascDivision = "ASC Division is required";
+  }
+
+  // --- Farmer details ---
+  if (!validateRequired(data.nameofthefarmer)) {
+    errors.nameofthefarmer = "Farmer name is required";
+  }
+
+  if (!validateRequired(data.address)) {
+    errors.address = "Address is required";
+  }
+
+  if (!validateRequired(data.idno)) {
+    errors.idno = "NIC number is required";
+  } else if (!validateNIC(data.idno)) {
+    errors.idno = "Invalid NIC format";
+  }
+
+  if (!validateRequired(data.telephoneno)) {
+    errors.telephoneno = "Telephone number is required";
+  } else if (!validatePhoneNumber(data.telephoneno)) {
+    errors.telephoneno = "Invalid phone number format";
+  }
+
+  // --- Gender & social indicators (optional but validated if provided) ---
+  if (data.female && data.male) {
+    errors.gender = "Select either Male or Female, not both";
+  }
+
+  // --- Cultivation details ---
+  if (!validateRequired(data.cropcultivated)) {
+    errors.cropcultivated = "Crop cultivated is required";
+  }
+
+  if (!validateRequired(data.extentHa)) {
+    errors.extentHa = "Extent (Ha) is required";
+  } else if (!validateNumber(data.extentHa, 0)) {
+    errors.extentHa = "Extent must be a positive number";
+  }
+
+  if (data.noOfPlant && !validateNumber(data.noOfPlant, 1)) {
+    errors.noOfPlant = "Number of plants must be at least 1";
+  }
+
+  // --- Cost & income ---
+  if (data.totalCultivationCostRs && !validateNumber(data.totalCultivationCostRs, 0)) {
+    errors.totalCultivationCostRs = "Total cultivation cost must be positive";
+  }
+
+  if (
+    data.agrowellDepreciationPerSeasonCostRs &&
+    !validateNumber(data.agrowellDepreciationPerSeasonCostRs, 0)
+  ) {
+    errors.agrowellDepreciationPerSeasonCostRs =
+      "Agro-well depreciation cost must be positive";
+  }
+
+  if (data.totalcost && !validateNumber(data.totalcost, 0)) {
+    errors.totalcost = "Total cost must be positive";
+  }
+
+  if (data.yieldKg && !validateNumber(data.yieldKg, 0)) {
+    errors.yieldKg = "Yield must be a positive number";
+  }
+
+  if (data.incomeRs && !validateNumber(data.incomeRs, 0)) {
+    errors.incomeRs = "Income must be a positive number";
+  }
+
+  if (data.netIncomeRs && !validateNumber(data.netIncomeRs)) {
+    errors.netIncomeRs = "Net income must be a valid number";
+  }
+
+  // --- Irrigation ---
+  if (
+    data.irrigationmethod !== undefined &&
+    !validateNumber(data.irrigationmethod, 0)
+  ) {
+    errors.irrigationmethod = "Invalid irrigation method";
+  }
+
+  return errors;
+};
+

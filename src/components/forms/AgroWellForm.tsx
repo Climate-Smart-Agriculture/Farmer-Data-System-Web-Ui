@@ -1,262 +1,157 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import agroWellService from "../../services/agroWellService";
-import farmerService from "../../services/farmerService";
-import { AgroWell, Farmer, FormErrors } from "../../types";
-import { validateAgroWellForm } from "../../utils/validation";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AgroWellService from "../../services/agroWellService";
+import { AgricultureFact, FormErrors } from "../../types";
+import { validateAgricultureForm } from "../../utils/validation";
 import "../farmer/Farmer.css";
 
-const AgroWellForm: React.FC = () => {
-  const [searchParams] = useSearchParams();
+const AgricultureFactForm: React.FC = () => {
   const navigate = useNavigate();
-  const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [formData, setFormData] = useState<AgroWell>({
-    farmerId: searchParams.get("farmerId") || "",
-    wellType: "",
-    depth: 0,
-    diameter: 0,
-    constructionDate: "",
-    waterLevel: 0,
-    waterQuality: "",
-    usageType: "",
-    status: "",
-    notes: "",
+
+  const [formData, setFormData] = useState<AgricultureFact>({
+    seasonMonth: "",
+    district: "",
+    dsdDivision: "",
+    ascDivision: "",
+    cascadeName: "",
+    tankOrVisName: "",
+    commandAreaHa: 0,
+    producerSociety: "",
+    farmerOrganizationName: "",
+    aiRange: "",
+    gnd: "",
+    nameofthefarmer: "",
+    address: "",
+    idno: "",
+    telephoneno: "",
+    female: "",
+    male: "",
+    samurdhi: "",
+    womanhead: "",
+    disable: "",
+    cropcultivated: "",
+    isReplicatedCrop: 0,
+    extentHa: 0,
+    noOfPlant: 0,
+    totalCultivationCostRs: 0,
+    agrowellDepreciationPerSeasonCostRs: 0,
+    totalcost: 0,
+    yieldKg: 0,
+    incomeRs: 0,
+    netIncomeRs: 0,
+    irrigationmethod: 0,
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
-  useEffect(() => {
-    loadFarmers();
-  }, []);
-
-  const loadFarmers = async () => {
-    try {
-      const response = await farmerService.getAllFarmers(1, 100);
-      setFarmers(response.farmers);
-    } catch (err) {
-      setApiError("Failed to load farmers");
-    }
-  };
+  const numericFields = [
+    "commandAreaHa",
+    "extentHa",
+    "noOfPlant",
+    "totalCultivationCostRs",
+    "agrowellDepreciationPerSeasonCostRs",
+    "totalcost",
+    "yieldKg",
+    "incomeRs",
+    "netIncomeRs",
+    "irrigationmethod",
+    "isReplicatedCrop",
+  ];
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    const numericFields = ["depth", "diameter", "waterLevel"];
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
     }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError("");
-    const validationErrors = validateAgroWellForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setErrors({});
-    setIsLoading(true);
+    console.log("Submit clicked!");
+    console.log("Form data:", formData);
+  
     try {
-      await agroWellService.createAgroWell(formData);
-      navigate("/agro-wells");
+      const savedRecord = await AgroWellService.createAgricultureFact(formData);
+      console.log("Saved record:", savedRecord);
+      alert("Record saved successfully!");
     } catch (err: any) {
-      setApiError(err.message || "Failed to save agro well");
-    } finally {
-      setIsLoading(false);
+      console.error("Error creating record:", err);
+      alert(err.message || "Failed to save record");
     }
   };
+  
 
   return (
     <div className="page-container">
       <div className="page-header">
-        <h2>Add Agro Well</h2>
+        <h2>Add Agriculture Record</h2>
       </div>
+
       {apiError && <div className="error-banner">{apiError}</div>}
+
       <form onSubmit={handleSubmit} className="form">
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="farmerId">Farmer *</label>
-            <select
-              id="farmerId"
-              name="farmerId"
-              value={formData.farmerId}
-              onChange={handleChange}
-              className={errors.farmerId ? "error" : ""}
-              disabled={isLoading}
-            >
-              <option value="">Select Farmer</option>
-              {farmers.map((farmer) => (
-                <option key={farmer.farmerId} value={farmer.farmerId}>
-                  {farmer.nic} - {farmer.fullName}
-                </option>
-              ))}
-            </select>
-            {errors.farmerId && (
-              <span className="error-message">{errors.farmerId}</span>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="wellType">Well Type *</label>
+            <label>Season / Month *</label>
             <input
-              type="text"
-              id="wellType"
-              name="wellType"
-              value={formData.wellType}
+              name="seasonMonth"
+              value={formData.seasonMonth}
               onChange={handleChange}
-              className={errors.wellType ? "error" : ""}
-              disabled={isLoading}
+              className={errors.seasonMonth ? "error" : ""}
             />
-            {errors.wellType && (
-              <span className="error-message">{errors.wellType}</span>
-            )}
+            {errors.seasonMonth && <span className="error-message">{errors.seasonMonth}</span>}
           </div>
-        </div>
-        <div className="form-row">
+
           <div className="form-group">
-            <label htmlFor="depth">Depth (m) *</label>
+            <label>District *</label>
             <input
-              type="number"
-              id="depth"
-              name="depth"
-              value={formData.depth}
+              name="district"
+              value={formData.district}
               onChange={handleChange}
-              className={errors.depth ? "error" : ""}
-              disabled={isLoading}
-              min="0"
-              step="0.01"
-            />
-            {errors.depth && (
-              <span className="error-message">{errors.depth}</span>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="diameter">Diameter (m)</label>
-            <input
-              type="number"
-              id="diameter"
-              name="diameter"
-              value={formData.diameter}
-              onChange={handleChange}
-              disabled={isLoading}
-              min="0"
-              step="0.01"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="waterLevel">Water Level (m)</label>
-            <input
-              type="number"
-              id="waterLevel"
-              name="waterLevel"
-              value={formData.waterLevel}
-              onChange={handleChange}
-              disabled={isLoading}
-              min="0"
-              step="0.01"
+              className={errors.district ? "error" : ""}
             />
           </div>
         </div>
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="usageType">Usage Type *</label>
-            <select
-              id="usageType"
-              name="usageType"
-              value={formData.usageType}
-              onChange={handleChange}
-              className={errors.usageType ? "error" : ""}
-              disabled={isLoading}
-            >
-              <option value="">Select Usage Type</option>
-              <option value="Irrigation">Irrigation</option>
-              <option value="Drinking">Drinking</option>
-              <option value="Both">Both</option>
-            </select>
-            {errors.usageType && (
-              <span className="error-message">{errors.usageType}</span>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="status">Status *</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className={errors.status ? "error" : ""}
-              disabled={isLoading}
-            >
-              <option value="">Select Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Under Maintenance">Under Maintenance</option>
-            </select>
-            {errors.status && (
-              <span className="error-message">{errors.status}</span>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="constructionDate">Construction Date</label>
-            <input
-              type="date"
-              id="constructionDate"
-              name="constructionDate"
-              value={formData.constructionDate}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="waterQuality">Water Quality</label>
-            <input
-              type="text"
-              id="waterQuality"
-              name="waterQuality"
-              value={formData.waterQuality}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group full-width">
-            <label htmlFor="notes">Notes</label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              disabled={isLoading}
-              rows={4}
-            />
-          </div>
-        </div>
+
+        {/* Add other fields as needed (text + numeric) */}
+        {Object.keys(formData).map((field) => {
+          if (["seasonMonth", "district"].includes(field)) return null; // already rendered
+          const isNumeric = numericFields.includes(field);
+          return (
+            <div className="form-row" key={field}>
+              <div className="form-group">
+                <label>{field.replace(/([A-Z])/g, " $1")}</label>
+                <input
+                  type={isNumeric ? "number" : "text"}
+                  name={field}
+                  value={formData[field as keyof AgricultureFact] as string | number}
+                  onChange={handleChange}
+                  min={isNumeric ? 0 : undefined}
+                  step={isNumeric ? 0.01 : undefined}
+                />
+              </div>
+            </div>
+          );
+        })}
+
         <div className="form-actions">
           <button
             type="button"
-            onClick={() => navigate("/agro-wells")}
+            onClick={() => navigate("/agriculture-facts")}
             className="btn btn-outline"
             disabled={isLoading}
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isLoading}
-          >
-            {isLoading ? "Saving..." : "Save Agro Well"}
+          <button type="submit" className="btn btn-primary" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save Record"}
           </button>
         </div>
       </form>
@@ -264,4 +159,4 @@ const AgroWellForm: React.FC = () => {
   );
 };
 
-export default AgroWellForm;
+export default AgricultureFactForm;
