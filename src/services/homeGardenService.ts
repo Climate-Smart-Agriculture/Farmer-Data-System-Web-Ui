@@ -9,20 +9,18 @@ class HomeGardenService {
     filter?: HomeGarden
   ): Promise<HomeGardenSearch> {
     try {
-      const response = await apiService.post<any>(
+      const response = await apiService.post<{
+        success: boolean;
+        message: string;
+        data: { homeGardenData: HomeGarden[]; totalCount: number };
+      }>(
         `${API_ENDPOINTS.HOME_GARDEN.SEARCH}?page=${page}&pageSize=${pageSize}`,
         filter
       );
-      if (
-        response.data &&
-        response.data.homeGardens &&
-        Array.isArray(response.data.homeGardens)
-      ) {
-        return response.data;
-      }
+      console.log("Home garden API response:", response);
       return {
-        homeGardens: [],
-        totalCount: 0,
+        homeGardens: response.data.homeGardenData || [],
+        totalCount: response.data.totalCount || 0,
       };
     } catch (error) {
       console.error("Error fetching home gardens:", error);

@@ -60,13 +60,15 @@ const CSAAgricultureDetail: React.FC = () => {
     return <div className="error-banner">CSA agriculture record not found</div>;
   }
 
-  const formatBoolean = (value?: number) => (value === 1 ? "Yes" : "No");
-  const formatNumber = (value?: number) =>
-    value !== undefined ? value.toLocaleString() : "-";
-  const formatCurrency = (value?: number) =>
-    value !== undefined ? `Rs. ${value.toLocaleString()}` : "-";
-  const formatDecimal = (value?: number) =>
-    value !== undefined ? value.toFixed(2) : "-";
+  const formatBoolean = (value?: number | null) => (value === 1 ? "Yes" : "No");
+  const formatNumber = (value?: number | null) =>
+    value != null ? value.toLocaleString() : "-";
+  const formatCurrency = (value?: number | null) =>
+    value != null ? `Rs. ${value.toLocaleString()}` : "-";
+  const formatDecimal = (value?: number | null) =>
+    value != null ? value.toFixed(2) : "-";
+  const formatPercent = (value?: number | null) =>
+    value != null ? `${value.toFixed(2)}%` : "-";
 
   return (
     <div className="page-container">

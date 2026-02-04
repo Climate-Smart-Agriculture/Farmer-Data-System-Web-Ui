@@ -92,7 +92,7 @@ const CSAAgricultureList: React.FC = () => {
 
   const [csaData, setCSAData] = useState<CSAAgriculture[]>([]);
   const [filterValues, setFilterValues] = useState<FilterValues>(
-    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
   );
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -102,7 +102,7 @@ const CSAAgricultureList: React.FC = () => {
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
       ? ["farmerId", "nicNumber", "farmerName", "district", "cropType"]
-      : ["nicNumber", "farmerName", "district", "cropType"]
+      : ["nicNumber", "farmerName", "district", "cropType"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -152,7 +152,7 @@ const CSAAgricultureList: React.FC = () => {
       const result = await csaAgricultureService.getAllCSAAgriculture(
         currentPage - 1,
         pageSize,
-        filter
+        filter,
       );
       setCSAData(result.csaAgricultureData || []);
       setTotalCount(result.totalCount || 0);
@@ -173,7 +173,7 @@ const CSAAgricultureList: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    setFilterValues({});
+    setFilterValues(farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {});
     setCurrentPage(1);
     loadCSAData();
   };
@@ -182,25 +182,8 @@ const CSAAgricultureList: React.FC = () => {
     setVisibleFilters((prev) =>
       prev.includes(filterKey)
         ? prev.filter((f) => f !== filterKey)
-        : [...prev, filterKey]
+        : [...prev, filterKey],
     );
-  };
-
-  const handleDelete = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this CSA agriculture record?"
-      )
-    ) {
-      return;
-    }
-
-    try {
-      await csaAgricultureService.deleteCSAAgriculture(id);
-      loadCSAData();
-    } catch (err: any) {
-      alert("Failed to delete CSA agriculture record: " + err.message);
-    }
   };
 
   const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
@@ -214,6 +197,7 @@ const CSAAgricultureList: React.FC = () => {
           value={filterValues[filter.key] || ""}
           onChange={(e) => handleFilterChange(filter.key, e.target.value)}
           className="search-select"
+          disabled={filter.key === "farmerId"}
         >
           {filter.options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -230,25 +214,54 @@ const CSAAgricultureList: React.FC = () => {
         value={filterValues[filter.key] || ""}
         onChange={(e) => handleFilterChange(filter.key, e.target.value)}
         className="search-input"
+        disabled={filter.key === "farmerId"}
       />
     );
   };
 
   const formatCurrency = (value?: number) =>
-    value !== undefined ? `Rs. ${value.toLocaleString()}` : "-";
+    value != null ? `Rs. ${value.toLocaleString()}` : "-";
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h2>CSA Agriculture Management</h2>
-        {farmerIdFromUrl && (
-          <Link
-            to={`/csa-agriculture/new?farmerId=${farmerIdFromUrl}`}
-            className="btn btn-primary"
-          >
-            Add New CSA Agriculture
-          </Link>
-        )}
+    <div className="list-page-container">
+      <div
+        className="page-header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <h2>
+            CSA Agriculture Management
+            {farmerIdFromUrl && (
+              <span
+                style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+              >
+                (Farmer ID: {farmerIdFromUrl})
+              </span>
+            )}
+          </h2>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          {farmerIdFromUrl && (
+            <Link
+              to={`/farmers/${farmerIdFromUrl}`}
+              className="btn btn-secondary"
+            >
+              Back to Farmer
+            </Link>
+          )}
+          {farmerIdFromUrl && (
+            <Link
+              to={`/csa-agriculture/new?farmerId=${farmerIdFromUrl}`}
+              className="btn btn-primary"
+            >
+              Add New CSA Agriculture
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="search-container">
@@ -265,7 +278,7 @@ const CSAAgricultureList: React.FC = () => {
                 <label className="filter-label">{filter.label}</label>
                 {renderFilterInput(filter)}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -311,66 +324,282 @@ const CSAAgricultureList: React.FC = () => {
         <div className="loading">Loading CSA agriculture data...</div>
       ) : (
         <div className="table-container">
+          {csaData.length > 0 && (
+            <div className="records-info">
+              Showing {(currentPage - 1) * pageSize + 1}-
+              {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount.toLocaleString()}
+            </div>
+          )}
           <table className="data-table">
             <thead>
               <tr>
+                <th>Actions</th>
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
+                <th>DSD Division</th>
+                <th>ASC Division</th>
+                <th>Cascade Name</th>
+                <th>Tank/Vis Name</th>
+                <th>Command Area (Ha)</th>
+                <th>Producer Society</th>
+                <th>Farmer Organization</th>
+                <th>AI Range</th>
+                <th>GN Division</th>
+                <th>Village Name</th>
                 <th>Farmer Name</th>
+                <th>Address</th>
                 <th>NIC</th>
+                <th>Telephone</th>
+                <th>Female</th>
+                <th>Male</th>
+                <th>Samurdhi</th>
+                <th>Woman Headed</th>
+                <th>Disabled</th>
                 <th>Crop Type</th>
+                <th>Replicated Crop</th>
+                <th>Irrigated Paddy</th>
+                <th>Rainfed Paddy</th>
+                <th>Irrigated Highland</th>
+                <th>Rainfed Highland</th>
+                <th>CSA Crop Diversification</th>
+                <th>CSA Seed Production</th>
+                <th>CSA Interseason</th>
+                <th>CSA Micro Irrigation</th>
+                <th>CSA Home Gardening</th>
+                <th>CSA Agronomic Interventions</th>
+                <th>CSA Training</th>
+                <th>IEC Conducted</th>
+                <th>FTS Training</th>
+                <th>FBS Training</th>
                 <th>Variety</th>
+                <th>Seed Qty (Kg)</th>
                 <th>Extent (Ha)</th>
+                <th>Pre Losses (Ha)</th>
+                <th>Harvested Area (Ha)</th>
+                <th>Seed Unit Price (Rs)</th>
+                <th>Project Seed Expense (Rs)</th>
+                <th>Farmer Seed Contribution (Rs)</th>
+                <th>Total Seed Cost (Rs)</th>
+                <th>Farmer Cost (Rs)</th>
+                <th>Total Cultivation Cost (Rs)</th>
+                <th>Post Losses (Kg)</th>
                 <th>Yield (Kg)</th>
+                <th>Sold Unit Price (Rs)</th>
                 <th>Income (Rs)</th>
                 <th>Net Income (Rs)</th>
-                <th>Actions</th>
+                <th>Productivity (Kg/Ha)</th>
+                <th>Baseline Productivity (Kg/Ha)</th>
+                <th>Yield Increase (Mt)</th>
+                <th>Yield Increase (%)</th>
+                <th>CDI Score</th>
+                <th>Cropping Intensity (%)</th>
               </tr>
             </thead>
             <tbody>
               {csaData.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className="no-data">
+                  <td colSpan={61} className="no-data">
                     No CSA agriculture records found
                   </td>
                 </tr>
               ) : (
                 csaData.map((csa) => (
                   <tr key={csa.csaAgricultureId}>
-                    <td>{csa.year || "-"}</td>
-                    <td>{csa.programName || "-"}</td>
-                    <td>{csa.district || "-"}</td>
-                    <td>{csa.farmerName || "-"}</td>
-                    <td>{csa.nicNumber || "-"}</td>
-                    <td>{csa.cropType || "-"}</td>
-                    <td>{csa.varietyName || "-"}</td>
-                    <td>{csa.extentHa || "-"}</td>
-                    <td>{csa.yieldKg?.toLocaleString() || "-"}</td>
-                    <td>{formatCurrency(csa.incomeRs)}</td>
-                    <td>{formatCurrency(csa.netIncomeRs)}</td>
-                    <td className="actions">
+                    <td>
                       <Link
                         to={`/csa-agriculture/${csa.csaAgricultureId}`}
                         className="btn-link"
                       >
                         View
                       </Link>
-                      <Link
-                        to={`/csa-agriculture/${csa.csaAgricultureId}/edit`}
-                        className="btn-link"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() =>
-                          csa.csaAgricultureId &&
-                          handleDelete(csa.csaAgricultureId)
-                        }
-                        className="btn-link danger"
-                      >
-                        Delete
-                      </button>
+                    </td>
+                    <td>{csa.year || "-"}</td>
+                    <td>{csa.programName || "-"}</td>
+                    <td>{csa.district || "-"}</td>
+                    <td>{csa.dsdDivision || "-"}</td>
+                    <td>{csa.ascDivision || "-"}</td>
+                    <td>{csa.cascadeName || "-"}</td>
+                    <td>{csa.tankOrVisName || "-"}</td>
+                    <td>{csa.commandAreaHa || "-"}</td>
+                    <td>{csa.producerSociety || "-"}</td>
+                    <td>{csa.farmerOrganizationName || "-"}</td>
+                    <td>{csa.aiRange || "-"}</td>
+                    <td>{csa.gramaNiladhariDivision || "-"}</td>
+                    <td>{csa.villageName || "-"}</td>
+                    <td>{csa.farmerName || "-"}</td>
+                    <td>{csa.address || "-"}</td>
+                    <td>{csa.nicNumber || "-"}</td>
+                    <td>{csa.telephoneNumber || "-"}</td>
+                    <td>
+                      {csa.isFemale === 1
+                        ? "Yes"
+                        : csa.isFemale === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.isMale === 1 ? "Yes" : csa.isMale === 0 ? "No" : "-"}
+                    </td>
+                    <td>
+                      {csa.isSamurdhiBeneficiary === 1
+                        ? "Yes"
+                        : csa.isSamurdhiBeneficiary === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.isWomanHeadedHousehold === 1
+                        ? "Yes"
+                        : csa.isWomanHeadedHousehold === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.isDisabled === 1
+                        ? "Yes"
+                        : csa.isDisabled === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>{csa.cropType || "-"}</td>
+                    <td>
+                      {csa.isReplicatedCrop === 1
+                        ? "Yes"
+                        : csa.isReplicatedCrop === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.grownIrrigatedPaddyIndicator === 1
+                        ? "Yes"
+                        : csa.grownIrrigatedPaddyIndicator === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.grownRainfedPaddyIndicator === 1
+                        ? "Yes"
+                        : csa.grownRainfedPaddyIndicator === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.grownIrrigatedHighlandIndicator === 1
+                        ? "Yes"
+                        : csa.grownIrrigatedHighlandIndicator === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.grownRainfedHighlandIndicator === 1
+                        ? "Yes"
+                        : csa.grownRainfedHighlandIndicator === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaCropDiversification === 1
+                        ? "Yes"
+                        : csa.csaCropDiversification === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaSeedProduction === 1
+                        ? "Yes"
+                        : csa.csaSeedProduction === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaInterseason === 1
+                        ? "Yes"
+                        : csa.csaInterseason === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaMicroIrrigation === 1
+                        ? "Yes"
+                        : csa.csaMicroIrrigation === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaHomeGardening === 1
+                        ? "Yes"
+                        : csa.csaHomeGardening === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaAgronomicInterventions === 1
+                        ? "Yes"
+                        : csa.csaAgronomicInterventions === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.csaTrainingReceived === 1
+                        ? "Yes"
+                        : csa.csaTrainingReceived === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.iecConducted === 1
+                        ? "Yes"
+                        : csa.iecConducted === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.ftsTraining === 1
+                        ? "Yes"
+                        : csa.ftsTraining === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {csa.fbsTraining === 1
+                        ? "Yes"
+                        : csa.fbsTraining === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>{csa.varietyName || "-"}</td>
+                    <td>{csa.seedQuantityKg?.toLocaleString() || "-"}</td>
+                    <td>{csa.extentHa || "-"}</td>
+                    <td>{csa.preLossesHa || "-"}</td>
+                    <td>{csa.harvestedAreaHa || "-"}</td>
+                    <td>{formatCurrency(csa.seedUnitPriceRs)}</td>
+                    <td>{formatCurrency(csa.projectSeedExpenseRs)}</td>
+                    <td>{formatCurrency(csa.farmerContributionSeedRs)}</td>
+                    <td>{formatCurrency(csa.totalSeedCostRs)}</td>
+                    <td>{formatCurrency(csa.farmerCostRs)}</td>
+                    <td>{formatCurrency(csa.totalCultivationCostRs)}</td>
+                    <td>{csa.postLossesKg?.toLocaleString() || "-"}</td>
+                    <td>{csa.yieldKg?.toLocaleString() || "-"}</td>
+                    <td>{formatCurrency(csa.soldUnitPriceRs)}</td>
+                    <td>{formatCurrency(csa.incomeRs)}</td>
+                    <td>{formatCurrency(csa.netIncomeRs)}</td>
+                    <td>{csa.productivityKgPerHa?.toLocaleString() || "-"}</td>
+                    <td>
+                      {csa.baselineProductivityKgPerHa?.toLocaleString() || "-"}
+                    </td>
+                    <td>{csa.yieldIncreaseMt?.toLocaleString() || "-"}</td>
+                    <td>
+                      {csa.yieldIncreasePercent != null
+                        ? `${csa.yieldIncreasePercent.toFixed(2)}%`
+                        : "-"}
+                    </td>
+                    <td>{csa.cdiScore || "-"}</td>
+                    <td>
+                      {csa.croppingIntensityPercent != null
+                        ? `${csa.croppingIntensityPercent.toFixed(2)}%`
+                        : "-"}
                     </td>
                   </tr>
                 ))

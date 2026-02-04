@@ -9,6 +9,20 @@
   margin: 0 auto;
 }
 
+.list-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Override content overflow when list page is active */
+.content:has(.list-page-container) {
+  overflow: hidden !important;
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -191,12 +205,29 @@
   color: #495057;
 }
 
+/* Records Info */
+.records-info {
+  padding: 0.75rem 1rem;
+  color: #495057;
+  font-size: 0.9rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 4px 4px 0 0;
+}
+
 /* Table */
 .table-container {
-  overflow-x: auto;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
   background: white;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-container .records-info + .data-table,
+.records-info + .table-container {
+  border-radius: 0 0 4px 4px;
 }
 
 .data-table {
@@ -206,6 +237,9 @@
 
 .data-table thead {
   background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .data-table th,
@@ -222,11 +256,6 @@
 
 .data-table tbody tr:hover {
   background-color: #f8f9fa;
-}
-
-.data-table .actions {
-  display: flex;
-  gap: 0.5rem;
 }
 
 .no-data {
@@ -445,6 +474,12 @@
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 0.5rem;
+  border-top: 1px solid #dee2e6;
+  z-index: 10;
 }
 /* Checkbox group */
 .checkbox-group {

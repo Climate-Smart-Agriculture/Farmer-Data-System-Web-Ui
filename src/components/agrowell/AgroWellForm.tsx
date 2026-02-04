@@ -66,7 +66,13 @@ const AgroWellForm: React.FC = () => {
     setIsLoading(true);
     try {
       const data = await agroWellService.getAgroWellById(wellId);
-      setFormData(data);
+      // Ensure all fields have proper defaults to prevent null access errors
+      setFormData({
+        ...initialFormData,
+        ...data,
+        // Convert farmerId to string if it's a number
+        farmerId: data.farmerId != null ? String(data.farmerId) : "",
+      });
     } catch (error: any) {
       console.error("Failed to load agro well data:", error);
     } finally {
@@ -77,16 +83,16 @@ const AgroWellForm: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!isEditing && !formData.farmerId?.trim()) {
+    if (!isEditing && !String(formData.farmerId || "").trim()) {
       newErrors.farmerId = "Farmer ID is required";
     }
-    if (!formData.nicNumber?.trim()) {
+    if (!String(formData.nicNumber || "").trim()) {
       newErrors.nicNumber = "NIC is required";
     }
-    if (!formData.farmerName?.trim()) {
+    if (!String(formData.farmerName || "").trim()) {
       newErrors.farmerName = "Farmer name is required";
     }
-    if (!formData.district?.trim()) {
+    if (!String(formData.district || "").trim()) {
       newErrors.district = "District is required";
     }
 
@@ -97,7 +103,7 @@ const AgroWellForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
 

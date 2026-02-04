@@ -92,7 +92,7 @@ const PoultryList: React.FC = () => {
 
   const [poultryRecords, setPoultryRecords] = useState<PoultryFarming[]>([]);
   const [filterValues, setFilterValues] = useState<FilterValues>(
-    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
   );
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -102,7 +102,7 @@ const PoultryList: React.FC = () => {
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
       ? ["farmerId", "nicNumber", "farmerName", "district", "villageName"]
-      : ["nicNumber", "farmerName", "district", "villageName"]
+      : ["nicNumber", "farmerName", "district", "villageName"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -148,7 +148,7 @@ const PoultryList: React.FC = () => {
       const result = await poultryService.getAllPoultry(
         currentPage - 1,
         pageSize,
-        filter
+        filter,
       );
       setPoultryRecords(result.poultryFarmingData || []);
       setTotalCount(result.totalCount || 0);
@@ -169,7 +169,7 @@ const PoultryList: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    setFilterValues({});
+    setFilterValues(farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {});
     setCurrentPage(1);
     loadPoultryRecords();
   };
@@ -178,25 +178,8 @@ const PoultryList: React.FC = () => {
     setVisibleFilters((prev) =>
       prev.includes(filterKey)
         ? prev.filter((f) => f !== filterKey)
-        : [...prev, filterKey]
+        : [...prev, filterKey],
     );
-  };
-
-  const handleDelete = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this poultry farming record?"
-      )
-    ) {
-      return;
-    }
-
-    try {
-      await poultryService.deletePoultry(id);
-      loadPoultryRecords();
-    } catch (err: any) {
-      alert("Failed to delete poultry farming record: " + err.message);
-    }
   };
 
   const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
@@ -210,6 +193,7 @@ const PoultryList: React.FC = () => {
           value={filterValues[filter.key] || ""}
           onChange={(e) => handleFilterChange(filter.key, e.target.value)}
           className="search-select"
+          disabled={filter.key === "farmerId"}
         >
           {filter.options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -226,6 +210,7 @@ const PoultryList: React.FC = () => {
         value={filterValues[filter.key] || ""}
         onChange={(e) => handleFilterChange(filter.key, e.target.value)}
         className="search-input"
+        disabled={filter.key === "farmerId"}
       />
     );
   };
@@ -234,17 +219,45 @@ const PoultryList: React.FC = () => {
     value !== undefined ? `Rs. ${value.toLocaleString()}` : "-";
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h2>Poultry Farming Management</h2>
-        {farmerIdFromUrl && (
-          <Link
-            to={`/poultry/new?farmerId=${farmerIdFromUrl}`}
-            className="btn btn-primary"
-          >
-            Add New Poultry Record
-          </Link>
-        )}
+    <div className="list-page-container">
+      <div
+        className="page-header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <h2>
+            Poultry Farming Management
+            {farmerIdFromUrl && (
+              <span
+                style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+              >
+                (Farmer ID: {farmerIdFromUrl})
+              </span>
+            )}
+          </h2>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          {farmerIdFromUrl && (
+            <>
+              <Link
+                to={`/farmers/${farmerIdFromUrl}`}
+                className="btn btn-secondary"
+              >
+                Back to Farmer
+              </Link>
+              <Link
+                to={`/poultry/new?farmerId=${farmerIdFromUrl}`}
+                className="btn btn-primary"
+              >
+                Add New Poultry Record
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="search-container">
@@ -261,7 +274,7 @@ const PoultryList: React.FC = () => {
                 <label className="filter-label">{filter.label}</label>
                 {renderFilterInput(filter)}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -307,9 +320,17 @@ const PoultryList: React.FC = () => {
         <div className="loading">Loading poultry farming data...</div>
       ) : (
         <div className="table-container">
+          {poultryRecords.length > 0 && (
+            <div className="records-info">
+              Showing {(currentPage - 1) * pageSize + 1}-
+              {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount.toLocaleString()}
+            </div>
+          )}
           <table className="data-table">
             <thead>
               <tr>
+                <th>Actions</th>
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
@@ -320,7 +341,6 @@ const PoultryList: React.FC = () => {
                 <th>Egg Production</th>
                 <th>Income (Rs)</th>
                 <th>Net Income (Rs)</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -333,6 +353,14 @@ const PoultryList: React.FC = () => {
               ) : (
                 poultryRecords.map((record) => (
                   <tr key={record.poultryId}>
+                    <td>
+                      <Link
+                        to={`/poultry/${record.poultryId}`}
+                        className="btn-link"
+                      >
+                        View
+                      </Link>
+                    </td>
                     <td>{record.year || "-"}</td>
                     <td>{record.programName || "-"}</td>
                     <td>{record.district || "-"}</td>
@@ -345,28 +373,6 @@ const PoultryList: React.FC = () => {
                     </td>
                     <td>{formatCurrency(record.incomeRs)}</td>
                     <td>{formatCurrency(record.netIncomeRs)}</td>
-                    <td className="actions">
-                      <Link
-                        to={`/poultry/${record.poultryId}`}
-                        className="btn-link"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        to={`/poultry/${record.poultryId}/edit`}
-                        className="btn-link"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() =>
-                          record.poultryId && handleDelete(record.poultryId)
-                        }
-                        className="btn-link danger"
-                      >
-                        Delete
-                      </button>
-                    </td>
                   </tr>
                 ))
               )}

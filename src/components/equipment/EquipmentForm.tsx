@@ -6,7 +6,7 @@ import "../farmer/Farmer.css";
 import "./Equipment.css";
 
 const initialFormData: Equipment = {
-  farmer: "",
+  farmerId: "",
   year: undefined,
   programName: "",
   district: "",
@@ -43,7 +43,7 @@ const EquipmentForm: React.FC = () => {
 
   const [formData, setFormData] = useState<Equipment>({
     ...initialFormData,
-    farmer: farmerIdFromUrl || "",
+    farmerId: farmerIdFromUrl || "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +70,7 @@ const EquipmentForm: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    const farmerId = formData.farmer;
+    const farmerId = formData.farmerId;
     if (!isEditing && !farmerId) {
       newErrors.farmer = "Farmer ID is required";
     }
@@ -140,7 +140,16 @@ const EquipmentForm: React.FC = () => {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h2>{isEditing ? "Edit Equipment" : "Add New Equipment"}</h2>
+        <h2>
+          {isEditing ? "Edit Equipment" : "Add New Equipment"}
+          {farmerIdFromUrl && (
+            <span
+              style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+            >
+              (Farmer ID: {farmerIdFromUrl})
+            </span>
+          )}
+        </h2>
       </div>
 
       {errors.submit && <div className="error-banner">{errors.submit}</div>}
@@ -156,7 +165,7 @@ const EquipmentForm: React.FC = () => {
                 <input
                   type="text"
                   name="farmer"
-                  value={formData.farmer || ""}
+                  value={formData.farmerId || ""}
                   disabled
                   className="disabled-input"
                 />

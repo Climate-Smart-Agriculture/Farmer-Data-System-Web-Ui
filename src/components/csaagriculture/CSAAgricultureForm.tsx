@@ -99,7 +99,13 @@ const CSAAgricultureForm: React.FC = () => {
     setIsLoading(true);
     try {
       const data = await csaAgricultureService.getCSAAgricultureById(csaId);
-      setFormData(data);
+      // Ensure all fields have proper defaults to prevent null access errors
+      setFormData({
+        ...initialFormData,
+        ...data,
+        // Convert farmerId to string if it's a number
+        farmerId: data.farmerId != null ? String(data.farmerId) : "",
+      });
     } catch (error: any) {
       console.error("Failed to load CSA agriculture data:", error);
     } finally {
@@ -110,16 +116,16 @@ const CSAAgricultureForm: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!isEditing && !formData.farmerId?.trim()) {
+    if (!isEditing && !String(formData.farmerId || "").trim()) {
       newErrors.farmerId = "Farmer ID is required";
     }
-    if (!formData.nicNumber?.trim()) {
+    if (!String(formData.nicNumber || "").trim()) {
       newErrors.nicNumber = "NIC is required";
     }
-    if (!formData.farmerName?.trim()) {
+    if (!String(formData.farmerName || "").trim()) {
       newErrors.farmerName = "Farmer name is required";
     }
-    if (!formData.district?.trim()) {
+    if (!String(formData.district || "").trim()) {
       newErrors.district = "District is required";
     }
 
@@ -128,7 +134,7 @@ const CSAAgricultureForm: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
 

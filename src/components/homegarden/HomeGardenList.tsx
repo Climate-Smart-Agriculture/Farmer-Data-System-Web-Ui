@@ -112,7 +112,6 @@ const HomeGardenList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
       ? ["farmerId", "nicNumber", "farmerName", "district", "villageName"]
@@ -127,40 +126,42 @@ const HomeGardenList: React.FC = () => {
 
   const loadHomeGardens = async () => {
     setIsLoading(true);
-    setError("");
     try {
-      const filter: HomeGarden = {
-        farmerId: filterValues.farmerId || undefined,
-        nicNumber: filterValues.nicNumber || "",
-        farmerName: filterValues.farmerName || "",
-        district: filterValues.district || "",
-        villageName: filterValues.villageName || "",
-        programName: filterValues.programName || "",
-        year: filterValues.year ? Number(filterValues.year) : undefined,
-        dsdDivision: filterValues.dsdDivision || "",
-        ascDivision: filterValues.ascDivision || "",
-        cascadeName: filterValues.cascadeName || "",
-        gramaNiladhariDivision: filterValues.gramaNiladhariDivision || "",
-        isFemale: filterValues.isFemale
-          ? Number(filterValues.isFemale)
-          : undefined,
-        isMale: filterValues.isMale ? Number(filterValues.isMale) : undefined,
-        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
-          ? Number(filterValues.isSamurdhiBeneficiary)
-          : undefined,
-        isWomanHeadedHousehold: filterValues.isWomanHeadedHousehold
-          ? Number(filterValues.isWomanHeadedHousehold)
-          : undefined,
-        isDisabled: filterValues.isDisabled
-          ? Number(filterValues.isDisabled)
-          : undefined,
-        isCsaConducted: filterValues.isCsaConducted
-          ? Number(filterValues.isCsaConducted)
-          : undefined,
-        isIecConducted: filterValues.isIecConducted
-          ? Number(filterValues.isIecConducted)
-          : undefined,
-      };
+      const filter: Partial<HomeGarden> = {};
+      if (filterValues.farmerId) filter.farmerId = filterValues.farmerId;
+      if (filterValues.nicNumber) filter.nicNumber = filterValues.nicNumber;
+      if (filterValues.farmerName) filter.farmerName = filterValues.farmerName;
+      if (filterValues.district) filter.district = filterValues.district;
+      if (filterValues.villageName)
+        filter.villageName = filterValues.villageName;
+      if (filterValues.programName)
+        filter.programName = filterValues.programName;
+      if (filterValues.year) filter.year = Number(filterValues.year);
+      if (filterValues.dsdDivision)
+        filter.dsdDivision = filterValues.dsdDivision;
+      if (filterValues.ascDivision)
+        filter.ascDivision = filterValues.ascDivision;
+      if (filterValues.cascadeName)
+        filter.cascadeName = filterValues.cascadeName;
+      if (filterValues.gramaNiladhariDivision)
+        filter.gramaNiladhariDivision = filterValues.gramaNiladhariDivision;
+      if (filterValues.isFemale)
+        filter.isFemale = Number(filterValues.isFemale);
+      if (filterValues.isMale) filter.isMale = Number(filterValues.isMale);
+      if (filterValues.isSamurdhiBeneficiary)
+        filter.isSamurdhiBeneficiary = Number(
+          filterValues.isSamurdhiBeneficiary
+        );
+      if (filterValues.isWomanHeadedHousehold)
+        filter.isWomanHeadedHousehold = Number(
+          filterValues.isWomanHeadedHousehold
+        );
+      if (filterValues.isDisabled)
+        filter.isDisabled = Number(filterValues.isDisabled);
+      if (filterValues.isCsaConducted)
+        filter.isCsaConducted = Number(filterValues.isCsaConducted);
+      if (filterValues.isIecConducted)
+        filter.isIecConducted = Number(filterValues.isIecConducted);
       const response = await homeGardenService.getAllHomeGardens(
         currentPage - 1,
         pageSize,
@@ -168,8 +169,8 @@ const HomeGardenList: React.FC = () => {
       );
       setTotalCount(response.totalCount || 0);
       setHomeGardens(response.homeGardens || []);
+      console.log("Home garden list received:", response.homeGardens);
     } catch (err: any) {
-      setError(err.message || "Failed to load home gardens");
       setHomeGardens([]);
     } finally {
       setIsLoading(false);
@@ -182,23 +183,6 @@ const HomeGardenList: React.FC = () => {
       setCurrentPage(1);
     } else {
       loadHomeGardens();
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this home garden record?"
-      )
-    ) {
-      return;
-    }
-
-    try {
-      await homeGardenService.deleteHomeGarden(id);
-      loadHomeGardens();
-    } catch (err: any) {
-      alert("Failed to delete home garden: " + err.message);
     }
   };
 
@@ -224,17 +208,45 @@ const HomeGardenList: React.FC = () => {
   const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h2>Home Garden Management</h2>
-        {farmerIdFromUrl && (
-          <Link
-            to={`/home-gardens/new?farmerId=${farmerIdFromUrl}`}
-            className="btn btn-primary"
-          >
-            Add New Home Garden
-          </Link>
-        )}
+    <div className="list-page-container">
+      <div
+        className="page-header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <h2>
+            Home Garden Management
+            {farmerIdFromUrl && (
+              <span
+                style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+              >
+                (Farmer ID: {farmerIdFromUrl})
+              </span>
+            )}
+          </h2>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          {farmerIdFromUrl && (
+            <Link
+              to={`/farmers/${farmerIdFromUrl}`}
+              className="btn btn-secondary"
+            >
+              Back to Farmer
+            </Link>
+          )}
+          {farmerIdFromUrl && (
+            <Link
+              to={`/home-gardens/new?farmerId=${farmerIdFromUrl}`}
+              className="btn btn-primary"
+            >
+              Add New Home Garden
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="search-container">
@@ -252,6 +264,7 @@ const HomeGardenList: React.FC = () => {
                       updateFilterValue(option.key, e.target.value)
                     }
                     className="search-input"
+                    disabled={option.key === "farmerId"}
                   />
                 ) : (
                   <select
@@ -260,6 +273,7 @@ const HomeGardenList: React.FC = () => {
                       updateFilterValue(option.key, e.target.value)
                     }
                     className="search-select"
+                    disabled={option.key === "farmerId"}
                   >
                     {option.options?.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -301,99 +315,85 @@ const HomeGardenList: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                setFilterValues({});
+                setFilterValues(
+                  farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+                );
+                setCurrentPage(1);
                 loadHomeGardens();
               }}
               className="btn btn-outline"
             >
-              Clear
+              Clear Filters
             </button>
           )}
         </form>
       </div>
 
-      {error && <div className="error-banner">{error}</div>}
-
-      {isLoading ? (
-        <div className="loading">Loading home gardens...</div>
-      ) : (
-        <div className="table-scroll-container">
-          <div className="table-container">
-            <table className="data-table home-garden-table">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Program</th>
-                  <th>NIC</th>
-                  <th>Farmer Name</th>
-                  <th>District</th>
-                  <th>Village</th>
-                  <th>Phone</th>
-                  <th>Gender</th>
-                  <th>Extent (Ha)</th>
-                  <th>Income (Rs)</th>
-                  <th>Gross Income (Rs)</th>
-                  <th>Actions</th>
+      <div className="table-container">
+        <table className="data-table home-garden-table">
+          <thead>
+            <tr>
+              <th>Actions</th>
+              <th>Year</th>
+              <th>Program</th>
+              <th>NIC</th>
+              <th>Farmer Name</th>
+              <th>District</th>
+              <th>Village</th>
+              <th>Phone</th>
+              <th>Gender</th>
+              <th>Extent (Ha)</th>
+              <th>Income (Rs)</th>
+              <th>Gross Income (Rs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={12} className="no-data">
+                  Loading...
+                </td>
+              </tr>
+            ) : homeGardens.length === 0 ? (
+              <tr>
+                <td colSpan={12} className="no-data">
+                  No home gardens found
+                </td>
+              </tr>
+            ) : (
+              homeGardens.map((garden) => (
+                <tr key={garden.homeGardenId}>
+                  <td>
+                    <Link
+                      to={`/home-gardens/${garden.homeGardenId}`}
+                      className="btn-link"
+                    >
+                      View
+                    </Link>
+                  </td>
+                  <td>{garden.year || "-"}</td>
+                  <td>{garden.programName || "-"}</td>
+                  <td>{garden.nicNumber || "-"}</td>
+                  <td>{garden.farmerName || "-"}</td>
+                  <td>{garden.district || "-"}</td>
+                  <td>{garden.villageName || "-"}</td>
+                  <td>{garden.telephoneNumber || "-"}</td>
+                  <td>
+                    {garden.isMale === 1
+                      ? "Male"
+                      : garden.isFemale === 1
+                      ? "Female"
+                      : "-"}
+                  </td>
+                  <td>{garden.extentHa ?? "-"}</td>
+                  <td>{garden.incomeRs ?? "-"}</td>
+                  <td>{garden.grossIncomeRs ?? "-"}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {homeGardens.length === 0 ? (
-                  <tr>
-                    <td colSpan={12} className="no-data">
-                      No home gardens found
-                    </td>
-                  </tr>
-                ) : (
-                  homeGardens.map((garden) => (
-                    <tr key={garden.homeGardenId}>
-                      <td>{garden.year || "-"}</td>
-                      <td>{garden.programName || "-"}</td>
-                      <td>{garden.nicNumber || "-"}</td>
-                      <td>{garden.farmerName || "-"}</td>
-                      <td>{garden.district || "-"}</td>
-                      <td>{garden.villageName || "-"}</td>
-                      <td>{garden.telephoneNumber || "-"}</td>
-                      <td>
-                        {garden.isMale === 1
-                          ? "Male"
-                          : garden.isFemale === 1
-                          ? "Female"
-                          : "-"}
-                      </td>
-                      <td>{garden.extentHa ?? "-"}</td>
-                      <td>{garden.incomeRs ?? "-"}</td>
-                      <td>{garden.grossIncomeRs ?? "-"}</td>
-                      <td className="actions">
-                        <Link
-                          to={`/home-gardens/${garden.homeGardenId}`}
-                          className="btn-link"
-                        >
-                          View
-                        </Link>
-                        <Link
-                          to={`/home-gardens/${garden.homeGardenId}/edit`}
-                          className="btn-link"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() =>
-                            garden.homeGardenId &&
-                            handleDelete(garden.homeGardenId)
-                          }
-                          className="btn-link danger"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {!isLoading && homeGardens.length > 0 && (
         <div className="pagination-controls">
@@ -402,7 +402,7 @@ const HomeGardenList: React.FC = () => {
             disabled={currentPage === 1}
             className="btn btn-primary"
           >
-            &nbsp;&lt;&nbsp;
+            &lt;
           </button>
           <span>
             Page{" "}
@@ -424,6 +424,7 @@ const HomeGardenList: React.FC = () => {
                   setCurrentPage(pageNumber);
                 }
               }}
+              style={{ width: 50 }}
             />{" "}
             of {Math.ceil(totalCount / pageSize)}
           </span>
@@ -436,7 +437,7 @@ const HomeGardenList: React.FC = () => {
             disabled={currentPage === Math.ceil(totalCount / pageSize)}
             className="btn btn-primary"
           >
-            &nbsp;&gt;&nbsp;
+            &gt;
           </button>
         </div>
       )}

@@ -138,19 +138,6 @@ const FarmerList: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this farmer?")) {
-      return;
-    }
-
-    try {
-      await farmerService.deleteFarmer(id);
-      loadFarmers();
-    } catch (err: any) {
-      alert("Failed to delete farmer: " + err.message);
-    }
-  };
-
   const toggleFilterVisibility = (filterKey: string) => {
     setVisibleFilters((prev) => {
       if (prev.includes(filterKey)) {
@@ -174,7 +161,7 @@ const FarmerList: React.FC = () => {
   const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
 
   return (
-    <div className="page-container">
+    <div className="list-page-container">
       <div className="page-header">
         <h2>Farmer Management</h2>
         <Link to="/farmers/new" className="btn btn-primary">
@@ -263,9 +250,17 @@ const FarmerList: React.FC = () => {
         <div className="loading">Loading farmers...</div>
       ) : (
         <div className="table-container">
+          {farmers.length > 0 && (
+            <div className="records-info">
+              Showing {(currentPage - 1) * pageSize + 1}-
+              {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount.toLocaleString()}
+            </div>
+          )}
           <table className="data-table">
             <thead>
               <tr>
+                <th>Actions</th>
                 <th>NIC</th>
                 <th>Name</th>
                 <th>Address</th>
@@ -279,7 +274,6 @@ const FarmerList: React.FC = () => {
                 <th>Disabled</th>
                 <th>Woman Headed</th>
                 <th>Samurdhi</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -292,6 +286,14 @@ const FarmerList: React.FC = () => {
               ) : (
                 farmers.map((farmer, index) => (
                   <tr key={farmer.farmerId}>
+                    <td>
+                      <Link
+                        to={`/farmers/${farmer.farmerId}`}
+                        className="btn-link"
+                      >
+                        View
+                      </Link>
+                    </td>
                     <td>{farmer.nic}</td>
                     <td>{farmer.fullName}</td>
                     <td>{farmer.address}</td>
@@ -322,28 +324,6 @@ const FarmerList: React.FC = () => {
                         : farmer.isSamurdhiBeneficiary === 0
                         ? "No"
                         : "-"}
-                    </td>
-                    <td className="actions">
-                      <Link
-                        to={`/farmers/${farmer.farmerId}`}
-                        className="btn-link"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        to={`/farmers/${farmer.farmerId}/edit`}
-                        className="btn-link"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() =>
-                          farmer.farmerId && handleDelete(farmer.farmerId)
-                        }
-                        className="btn-link danger"
-                      >
-                        Delete
-                      </button>
                     </td>
                   </tr>
                 ))

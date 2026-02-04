@@ -81,7 +81,7 @@ const AgroWellList: React.FC = () => {
 
   const [agroWells, setAgroWells] = useState<AgroWell[]>([]);
   const [filterValues, setFilterValues] = useState<FilterValues>(
-    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
   );
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,7 +91,7 @@ const AgroWellList: React.FC = () => {
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
       ? ["farmerId", "nicNumber", "farmerName", "district", "cultivations"]
-      : ["nicNumber", "farmerName", "district", "cultivations"]
+      : ["nicNumber", "farmerName", "district", "cultivations"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -137,7 +137,7 @@ const AgroWellList: React.FC = () => {
       const result = await agroWellService.getAllAgroWells(
         currentPage - 1,
         pageSize,
-        filter
+        filter,
       );
       setAgroWells(result.agroWellData || []);
       setTotalCount(result.totalCount || 0);
@@ -158,7 +158,7 @@ const AgroWellList: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    setFilterValues({});
+    setFilterValues(farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {});
     setCurrentPage(1);
     loadAgroWells();
   };
@@ -167,23 +167,8 @@ const AgroWellList: React.FC = () => {
     setVisibleFilters((prev) =>
       prev.includes(filterKey)
         ? prev.filter((f) => f !== filterKey)
-        : [...prev, filterKey]
+        : [...prev, filterKey],
     );
-  };
-
-  const handleDelete = async (id: string) => {
-    if (
-      !window.confirm("Are you sure you want to delete this agro well record?")
-    ) {
-      return;
-    }
-
-    try {
-      await agroWellService.deleteAgroWell(id);
-      loadAgroWells();
-    } catch (err: any) {
-      alert("Failed to delete agro well record: " + err.message);
-    }
   };
 
   const hasActiveFilters = Object.values(filterValues).some((v) => v !== "");
@@ -197,6 +182,7 @@ const AgroWellList: React.FC = () => {
           value={filterValues[filter.key] || ""}
           onChange={(e) => handleFilterChange(filter.key, e.target.value)}
           className="search-select"
+          disabled={filter.key === "farmerId"}
         >
           {filter.options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -213,25 +199,54 @@ const AgroWellList: React.FC = () => {
         value={filterValues[filter.key] || ""}
         onChange={(e) => handleFilterChange(filter.key, e.target.value)}
         className="search-input"
+        disabled={filter.key === "farmerId"}
       />
     );
   };
 
   const formatCurrency = (value?: number) =>
-    value !== undefined ? `Rs. ${value.toLocaleString()}` : "-";
+    value != null ? `Rs. ${value.toLocaleString()}` : "-";
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h2>Agro Well Management</h2>
-        {farmerIdFromUrl && (
-          <Link
-            to={`/agro-wells/new?farmerId=${farmerIdFromUrl}`}
-            className="btn btn-primary"
-          >
-            Add New Agro Well
-          </Link>
-        )}
+    <div className="list-page-container">
+      <div
+        className="page-header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <h2>
+            Agro Well Management
+            {farmerIdFromUrl && (
+              <span
+                style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+              >
+                (Farmer ID: {farmerIdFromUrl})
+              </span>
+            )}
+          </h2>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          {farmerIdFromUrl && (
+            <>
+              <Link
+                to={`/farmers/${farmerIdFromUrl}`}
+                className="btn btn-secondary"
+              >
+                Back to Farmer
+              </Link>
+              <Link
+                to={`/agro-wells/new?farmerId=${farmerIdFromUrl}`}
+                className="btn btn-primary"
+              >
+                Add New Agro Well
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="search-container">
@@ -248,7 +263,7 @@ const AgroWellList: React.FC = () => {
                 <label className="filter-label">{filter.label}</label>
                 {renderFilterInput(filter)}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -294,66 +309,139 @@ const AgroWellList: React.FC = () => {
         <div className="loading">Loading agro well data...</div>
       ) : (
         <div className="table-container">
+          {agroWells.length > 0 && (
+            <div className="records-info">
+              Showing {(currentPage - 1) * pageSize + 1}-
+              {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount.toLocaleString()}
+            </div>
+          )}
           <table className="data-table">
             <thead>
               <tr>
+                <th>Actions</th>
                 <th>Program</th>
                 <th>District</th>
+                <th>DSD Division</th>
+                <th>ASC Division</th>
+                <th>Cascade Name</th>
+                <th>Tank/Vis Name</th>
+                <th>Command Area (Ha)</th>
+                <th>Producer Society</th>
+                <th>Farmer Organization</th>
+                <th>AI Range</th>
+                <th>GN Division</th>
+                <th>Village Name</th>
                 <th>Farmer Name</th>
+                <th>Address</th>
                 <th>NIC</th>
+                <th>Telephone</th>
+                <th>Female</th>
+                <th>Male</th>
+                <th>Samurdhi</th>
+                <th>Woman Headed</th>
+                <th>Disabled</th>
                 <th>Cultivations</th>
+                <th>Replicated Crop</th>
                 <th>Irrigation Method</th>
                 <th>Extent (Ha)</th>
                 <th>No. of Plants</th>
+                <th>Cultivation Cost (Rs)</th>
+                <th>Agrowell Depreciation (Rs)</th>
+                <th>Total Cost (Rs)</th>
                 <th>Yield (Kg)</th>
                 <th>Income (Rs)</th>
                 <th>Net Income (Rs)</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {agroWells.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className="no-data">
+                  <td colSpan={33} className="no-data">
                     No agro well records found
                   </td>
                 </tr>
               ) : (
                 agroWells.map((well) => (
                   <tr key={well.agroWellId}>
-                    <td>{well.programName || "-"}</td>
-                    <td>{well.district || "-"}</td>
-                    <td>{well.farmerName || "-"}</td>
-                    <td>{well.nicNumber || "-"}</td>
-                    <td>{well.cultivations || "-"}</td>
-                    <td>{well.irrigationMethod || "-"}</td>
-                    <td>{well.extentHa || "-"}</td>
-                    <td>{well.noOfPlant || "-"}</td>
-                    <td>{well.yieldKg?.toLocaleString() || "-"}</td>
-                    <td>{formatCurrency(well.incomeRs)}</td>
-                    <td>{formatCurrency(well.netIncomeRs)}</td>
-                    <td className="actions">
+                    <td>
                       <Link
                         to={`/agro-wells/${well.agroWellId}`}
                         className="btn-link"
                       >
                         View
                       </Link>
-                      <Link
-                        to={`/agro-wells/${well.agroWellId}/edit`}
-                        className="btn-link"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() =>
-                          well.agroWellId && handleDelete(well.agroWellId)
-                        }
-                        className="btn-link danger"
-                      >
-                        Delete
-                      </button>
                     </td>
+                    <td>{well.programName || "-"}</td>
+                    <td>{well.district || "-"}</td>
+                    <td>{well.dsdDivision || "-"}</td>
+                    <td>{well.ascDivision || "-"}</td>
+                    <td>{well.cascadeName || "-"}</td>
+                    <td>{well.tankOrVisName || "-"}</td>
+                    <td>{well.commandAreaHa || "-"}</td>
+                    <td>{well.producerSociety || "-"}</td>
+                    <td>{well.farmerOrganizationName || "-"}</td>
+                    <td>{well.aiRange || "-"}</td>
+                    <td>{well.gramaNiladhariDivision || "-"}</td>
+                    <td>{well.villageName || "-"}</td>
+                    <td>{well.farmerName || "-"}</td>
+                    <td>{well.address || "-"}</td>
+                    <td>{well.nicNumber || "-"}</td>
+                    <td>{well.telephoneNumber || "-"}</td>
+                    <td>
+                      {well.isFemale === 1
+                        ? "Yes"
+                        : well.isFemale === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {well.isMale === 1
+                        ? "Yes"
+                        : well.isMale === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {well.isSamurdhiBeneficiary === 1
+                        ? "Yes"
+                        : well.isSamurdhiBeneficiary === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {well.isWomanHeadedHousehold === 1
+                        ? "Yes"
+                        : well.isWomanHeadedHousehold === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>
+                      {well.isDisabled === 1
+                        ? "Yes"
+                        : well.isDisabled === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>{well.cultivations || "-"}</td>
+                    <td>
+                      {well.isReplicatedCrop === 1
+                        ? "Yes"
+                        : well.isReplicatedCrop === 0
+                          ? "No"
+                          : "-"}
+                    </td>
+                    <td>{well.irrigationMethod || "-"}</td>
+                    <td>{well.extentHa || "-"}</td>
+                    <td>{well.noOfPlant || "-"}</td>
+                    <td>{formatCurrency(well.totalCultivationCostRs)}</td>
+                    <td>
+                      {formatCurrency(well.agrowellDepreciationPerSeasonCostRs)}
+                    </td>
+                    <td>{formatCurrency(well.totalCostRs)}</td>
+                    <td>{well.yieldKg?.toLocaleString() || "-"}</td>
+                    <td>{formatCurrency(well.incomeRs)}</td>
+                    <td>{formatCurrency(well.netIncomeRs)}</td>
                   </tr>
                 ))
               )}

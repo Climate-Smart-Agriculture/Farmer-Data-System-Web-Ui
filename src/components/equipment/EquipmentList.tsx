@@ -70,7 +70,7 @@ const EquipmentList: React.FC = () => {
 
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [filterValues, setFilterValues] = useState<FilterValues>(
-    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
   );
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +80,7 @@ const EquipmentList: React.FC = () => {
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
       ? ["farmerId", "nicNumber", "farmerName", "district", "equipmentName"]
-      : ["nicNumber", "farmerName", "district", "equipmentName"]
+      : ["nicNumber", "farmerName", "district", "equipmentName"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -94,7 +94,7 @@ const EquipmentList: React.FC = () => {
     setError("");
     try {
       const filter: Partial<Equipment> = {
-        farmer: filterValues.farmerId || "",
+        farmerId: filterValues.farmerId || "",
         nicNumber: filterValues.nicNumber || "",
         farmerName: filterValues.farmerName || "",
         district: filterValues.district || "",
@@ -120,7 +120,7 @@ const EquipmentList: React.FC = () => {
       const result = await equipmentService.getAllEquipments(
         currentPage,
         pageSize,
-        filter
+        filter,
       );
       setEquipments(result.equipmentData || []);
       setTotalCount(result.totalCount || 0);
@@ -141,7 +141,7 @@ const EquipmentList: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    setFilterValues({});
+    setFilterValues(farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {});
     setCurrentPage(1);
     loadEquipments();
   };
@@ -150,7 +150,7 @@ const EquipmentList: React.FC = () => {
     setVisibleFilters((prev) =>
       prev.includes(filterKey)
         ? prev.filter((f) => f !== filterKey)
-        : [...prev, filterKey]
+        : [...prev, filterKey],
     );
   };
 
@@ -164,6 +164,7 @@ const EquipmentList: React.FC = () => {
         <select
           value={filterValues[filter.key] || ""}
           onChange={(e) => handleFilterChange(filter.key, e.target.value)}
+          disabled={filter.key === "farmerId"}
         >
           {filter.options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -179,22 +180,51 @@ const EquipmentList: React.FC = () => {
         placeholder={`Search ${filter.label}...`}
         value={filterValues[filter.key] || ""}
         onChange={(e) => handleFilterChange(filter.key, e.target.value)}
+        disabled={filter.key === "farmerId"}
       />
     );
   };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h2>Equipment Management</h2>
-        {farmerIdFromUrl && (
-          <Link
-            to={`/equipment/new?farmerId=${farmerIdFromUrl}`}
-            className="btn btn-primary"
-          >
-            Add New Equipment
-          </Link>
-        )}
+    <div className="list-page-container">
+      <div
+        className="page-header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <h2>
+            Equipment Management
+            {farmerIdFromUrl && (
+              <span
+                style={{ fontSize: "1rem", color: "#888", marginLeft: "1rem" }}
+              >
+                (Farmer ID: {farmerIdFromUrl})
+              </span>
+            )}
+          </h2>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          {farmerIdFromUrl && (
+            <>
+              <Link
+                to={`/farmers/${farmerIdFromUrl}`}
+                className="btn btn-secondary"
+              >
+                Back to Farmer
+              </Link>
+              <Link
+                to={`/equipment/new?farmerId=${farmerIdFromUrl}`}
+                className="btn btn-primary"
+              >
+                Add New Equipment
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="search-container">
@@ -211,7 +241,7 @@ const EquipmentList: React.FC = () => {
                 <label className="filter-label">{filter.label}</label>
                 {renderFilterInput(filter)}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -257,9 +287,17 @@ const EquipmentList: React.FC = () => {
         <div className="loading">Loading equipment...</div>
       ) : (
         <div className="table-container">
+          {equipments.length > 0 && (
+            <div className="records-info">
+              Showing {(currentPage - 1) * pageSize + 1}-
+              {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount.toLocaleString()}
+            </div>
+          )}
           <table className="data-table">
             <thead>
               <tr>
+                <th>Actions</th>
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
@@ -270,7 +308,6 @@ const EquipmentList: React.FC = () => {
                 <th>Unit Price (Rs)</th>
                 <th>Total Cost (Rs)</th>
                 <th>Farmer Cost (Rs)</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -283,6 +320,14 @@ const EquipmentList: React.FC = () => {
               ) : (
                 equipments.map((equipment) => (
                   <tr key={equipment.equipmentId}>
+                    <td>
+                      <Link
+                        to={`/equipment/${equipment.equipmentId}`}
+                        className="btn-link"
+                      >
+                        View
+                      </Link>
+                    </td>
                     <td>{equipment.year}</td>
                     <td>{equipment.programName}</td>
                     <td>{equipment.district}</td>
@@ -293,20 +338,6 @@ const EquipmentList: React.FC = () => {
                     <td>{equipment.unitPriceRs?.toLocaleString()}</td>
                     <td>{equipment.totalProjectCostRs?.toLocaleString()}</td>
                     <td>{equipment.farmerCostRs?.toLocaleString()}</td>
-                    <td className="actions">
-                      <Link
-                        to={`/equipment/${equipment.equipmentId}`}
-                        className="btn-link"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        to={`/equipment/${equipment.equipmentId}/edit`}
-                        className="btn-link"
-                      >
-                        Edit
-                      </Link>
-                    </td>
                   </tr>
                 ))
               )}
@@ -316,21 +347,47 @@ const EquipmentList: React.FC = () => {
       )}
 
       {!isLoading && equipments.length > 0 && (
-        <div className="pagination">
+        <div className="pagination-controls">
           <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
+            className="btn btn-primary"
           >
-            Previous
+            &nbsp;&lt;&nbsp;
           </button>
           <span>
-            Page {currentPage} of {totalPages} ({totalCount} total)
+            Page{" "}
+            <input
+              type="number"
+              max={Math.ceil(totalCount / pageSize)}
+              min={1}
+              value={currentPage}
+              onChange={(e) => {
+                var value = e.target.value.trim();
+                if (value != "") {
+                  var pageNumber = Number(value);
+                  if (pageNumber > Math.ceil(totalCount / pageSize)) {
+                    pageNumber = Math.ceil(totalCount / pageSize);
+                  }
+                  if (pageNumber < 1) {
+                    pageNumber = 1;
+                  }
+                  setCurrentPage(pageNumber);
+                }
+              }}
+            />{" "}
+            of {Math.ceil(totalCount / pageSize)}
           </span>
           <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1),
+              )
+            }
+            disabled={currentPage === Math.ceil(totalCount / pageSize)}
+            className="btn btn-primary"
           >
-            Next
+            &nbsp;&gt;&nbsp;
           </button>
         </div>
       )}

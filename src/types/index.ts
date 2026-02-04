@@ -50,7 +50,7 @@ export interface FarmerSearch {
 // Equipment Types
 export interface Equipment {
   equipmentId?: string;
-  farmer?: string;
+  farmerId?: string;
   year?: number;
   programName?: string;
   district?: string;
