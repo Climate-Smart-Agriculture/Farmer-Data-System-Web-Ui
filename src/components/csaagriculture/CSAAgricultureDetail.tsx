@@ -34,7 +34,7 @@ const CSAAgricultureDetail: React.FC = () => {
     if (
       !id ||
       !window.confirm(
-        "Are you sure you want to delete this CSA agriculture record?"
+        "Are you sure you want to delete this CSA agriculture record?",
       )
     ) {
       return;
@@ -60,7 +60,8 @@ const CSAAgricultureDetail: React.FC = () => {
     return <div className="error-banner">CSA agriculture record not found</div>;
   }
 
-  const formatBoolean = (value?: number | null) => (value === 1 ? "Yes" : "No");
+  const formatBoolean = (value?: string | undefined) =>
+    value === "1" ? "Yes" : "No";
   const formatNumber = (value?: number | null) =>
     value != null ? value.toLocaleString() : "-";
   const formatCurrency = (value?: number | null) =>
@@ -90,8 +91,12 @@ const CSAAgricultureDetail: React.FC = () => {
           <h3>Basic Information</h3>
           <div className="detail-grid">
             <div className="detail-item">
-              <label>CSA Agriculture ID</label>
-              <span>{csaData.csaAgricultureId || "-"}</span>
+              <label>CSA Record ID</label>
+              <span>{csaData.csaRecordPk || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Record ID</label>
+              <span>{csaData.recordId || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Year</label>
@@ -134,7 +139,7 @@ const CSAAgricultureDetail: React.FC = () => {
             </div>
             <div className="detail-item">
               <label>Command Area (Ha)</label>
-              <span>{formatDecimal(csaData.commandAreaHa)}</span>
+              <span>{csaData.commandAreaHa || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Producer Society</label>
@@ -152,52 +157,9 @@ const CSAAgricultureDetail: React.FC = () => {
               <label>Village Name</label>
               <span>{csaData.villageName || "-"}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="detail-section">
-          <h3>Farmer Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Farmer Name</label>
-              <span>{csaData.farmerName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>NIC Number</label>
-              <span>{csaData.nicNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Address</label>
-              <span>{csaData.address || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Telephone Number</label>
-              <span>{csaData.telephoneNumber || "-"}</span>
-            </div>
             <div className="detail-item">
               <label>Farmer Organization</label>
               <span>{csaData.farmerOrganizationName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Female</label>
-              <span>{formatBoolean(csaData.isFemale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Male</label>
-              <span>{formatBoolean(csaData.isMale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Samurdhi Beneficiary</label>
-              <span>{formatBoolean(csaData.isSamurdhiBeneficiary)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Woman Headed Household</label>
-              <span>{formatBoolean(csaData.isWomanHeadedHousehold)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Disabled</label>
-              <span>{formatBoolean(csaData.isDisabled)}</span>
             </div>
           </div>
         </div>
@@ -300,14 +262,6 @@ const CSAAgricultureDetail: React.FC = () => {
           <h3>Training Information</h3>
           <div className="detail-grid">
             <div className="detail-item">
-              <label>CSA Training Received</label>
-              <span>{formatBoolean(csaData.csaTrainingReceived)}</span>
-            </div>
-            <div className="detail-item">
-              <label>IEC Conducted</label>
-              <span>{formatBoolean(csaData.iecConducted)}</span>
-            </div>
-            <div className="detail-item">
               <label>FTS Training</label>
               <span>{formatBoolean(csaData.ftsTraining)}</span>
             </div>
@@ -344,7 +298,11 @@ const CSAAgricultureDetail: React.FC = () => {
             </div>
             <div className="detail-item">
               <label>Yield Increase (%)</label>
-              <span>{formatDecimal(csaData.yieldIncreasePercent)}</span>
+              <span>
+                {csaData.yieldIncreasePercent
+                  ? `${csaData.yieldIncreasePercent}%`
+                  : "-"}
+              </span>
             </div>
             <div className="detail-item">
               <label>CDI Score</label>
@@ -352,7 +310,11 @@ const CSAAgricultureDetail: React.FC = () => {
             </div>
             <div className="detail-item">
               <label>Cropping Intensity (%)</label>
-              <span>{formatDecimal(csaData.croppingIntensityPercent)}</span>
+              <span>
+                {csaData.croppingIntensityPercent
+                  ? `${csaData.croppingIntensityPercent}%`
+                  : "-"}
+              </span>
             </div>
           </div>
         </div>
@@ -417,9 +379,11 @@ const CSAAgricultureDetail: React.FC = () => {
               <span>{formatCurrency(csaData.productivityValuePerHaRs)}</span>
             </div>
             <div className="detail-item">
-              <label>Incremental Productivity Value</label>
+              <label>Incremental Productivity (%)</label>
               <span>
-                {formatCurrency(csaData.incrementalProductivityValueRs)}
+                {csaData.incrementalProductivityPercent
+                  ? `${csaData.incrementalProductivityPercent}%`
+                  : "-"}
               </span>
             </div>
           </div>

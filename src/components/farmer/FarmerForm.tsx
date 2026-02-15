@@ -11,19 +11,36 @@ const FarmerForm: React.FC = () => {
   const isEditMode = !!id;
 
   const [formData, setFormData] = useState<Farmer>({
-    nic: "",
-    fullName: "",
+    farmerName: "",
+    nicNumber: "",
     address: "",
-    contactNumber: "",
-    email: "",
+    telephoneNumber: "",
     gender: "",
     district: "",
     villageName: "",
     ascDivision: "",
     dsdDivision: "",
-    isDisabled: 0,
-    isWomanHeadedHousehold: 0,
-    isSamurdhiBeneficiary: 0,
+    aiRange: "",
+    gramaNiladhariDivision: "",
+    cascadeName: "",
+    tankOrVisName: "",
+    producerSociety: "",
+    farmerOrganizationName: "",
+    commandAreaHa: undefined,
+    isDisabled: "0",
+    isWomanHeadedHousehold: "0",
+    isSamurdhiBeneficiary: "0",
+    isCsaConducted: "0",
+    isIecConducted: "0",
+    ftsTraining: "0",
+    fbsTraining: "0",
+    csaCropDiversification: "0",
+    csaSeedProduction: "0",
+    csaInterseason: "0",
+    csaMicroIrrigation: "0",
+    csaHomeGardening: "0",
+    csaAgronomicInterventions: "0",
+    provinceCode: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -46,7 +63,7 @@ const FarmerForm: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -107,36 +124,36 @@ const FarmerForm: React.FC = () => {
           <h3 className="form-section-title">Personal Information</h3>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="nic">NIC *</label>
+              <label htmlFor="nicNumber">NIC Number *</label>
               <input
                 type="text"
-                id="nic"
-                name="nic"
-                value={formData.nic}
+                id="nicNumber"
+                name="nicNumber"
+                value={formData.nicNumber}
                 onChange={handleChange}
                 placeholder="e.g., 123456789V or 200012345678"
-                className={errors.nic ? "error" : ""}
+                className={errors.nicNumber ? "error" : ""}
                 disabled={isLoading}
               />
-              {errors.nic && (
-                <span className="error-message">{errors.nic}</span>
+              {errors.nicNumber && (
+                <span className="error-message">{errors.nicNumber}</span>
               )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="fullName">Full Name *</label>
+              <label htmlFor="farmerName">Farmer Name *</label>
               <input
                 type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
+                id="farmerName"
+                name="farmerName"
+                value={formData.farmerName}
                 onChange={handleChange}
-                placeholder="Enter full name"
-                className={errors.fullName ? "error" : ""}
+                placeholder="Enter farmer name"
+                className={errors.farmerName ? "error" : ""}
                 disabled={isLoading}
               />
-              {errors.fullName && (
-                <span className="error-message">{errors.fullName}</span>
+              {errors.farmerName && (
+                <span className="error-message">{errors.farmerName}</span>
               )}
             </div>
 
@@ -166,36 +183,36 @@ const FarmerForm: React.FC = () => {
           <h3 className="form-section-title">Contact Information</h3>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="contactNumber">Contact Number *</label>
+              <label htmlFor="telephoneNumber">Telephone Number *</label>
               <input
                 type="text"
-                id="contactNumber"
-                name="contactNumber"
-                value={formData.contactNumber}
+                id="telephoneNumber"
+                name="telephoneNumber"
+                value={formData.telephoneNumber}
                 onChange={handleChange}
                 placeholder="e.g., 0771234567"
-                className={errors.contactNumber ? "error" : ""}
+                className={errors.telephoneNumber ? "error" : ""}
                 disabled={isLoading}
               />
-              {errors.contactNumber && (
-                <span className="error-message">{errors.contactNumber}</span>
+              {errors.telephoneNumber && (
+                <span className="error-message">{errors.telephoneNumber}</span>
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
+            <div className="form-group full-width">
+              <label htmlFor="address">Address</label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
-                placeholder="e.g., farmer@example.com"
-                className={errors.email ? "error" : ""}
+                placeholder="Enter full address"
+                className={errors.address ? "error" : ""}
                 disabled={isLoading}
               />
-              {errors.email && (
-                <span className="error-message">{errors.email}</span>
+              {errors.address && (
+                <span className="error-message">{errors.address}</span>
               )}
             </div>
           </div>
@@ -249,21 +266,22 @@ const FarmerForm: React.FC = () => {
                 disabled={isLoading}
               />
             </div>
-          </div>
 
-          <div className="form-row">
             <div className="form-group">
-              <label htmlFor="ascDivision">ASC Division</label>
+              <label htmlFor="provinceCode">Province Code</label>
               <input
                 type="text"
-                id="ascDivision"
-                name="ascDivision"
-                value={formData.ascDivision}
+                id="provinceCode"
+                name="provinceCode"
+                value={formData.provinceCode}
                 onChange={handleChange}
-                placeholder="Agrarian Service Center Division"
+                placeholder="Enter province code"
                 disabled={isLoading}
               />
             </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label htmlFor="dsdDivision">DSD Division</label>
               <input
@@ -276,12 +294,263 @@ const FarmerForm: React.FC = () => {
                 disabled={isLoading}
               />
             </div>
+
+            <div className="form-group">
+              <label htmlFor="ascDivision">ASC Division</label>
+              <input
+                type="text"
+                id="ascDivision"
+                name="ascDivision"
+                value={formData.ascDivision}
+                onChange={handleChange}
+                placeholder="Agrarian Service Center Division"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="aiRange">AI Range</label>
+              <input
+                type="text"
+                id="aiRange"
+                name="aiRange"
+                value={formData.aiRange}
+                onChange={handleChange}
+                placeholder="Agricultural Instructor Range"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="gramaNiladhariDivision">
+                Grama Niladhari Division
+              </label>
+              <input
+                type="text"
+                id="gramaNiladhariDivision"
+                name="gramaNiladhariDivision"
+                value={formData.gramaNiladhariDivision}
+                onChange={handleChange}
+                placeholder="Enter GN Division"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="cascadeName">Cascade Name</label>
+              <input
+                type="text"
+                id="cascadeName"
+                name="cascadeName"
+                value={formData.cascadeName}
+                onChange={handleChange}
+                placeholder="Enter cascade name"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tankOrVisName">Tank or VIS Name</label>
+              <input
+                type="text"
+                id="tankOrVisName"
+                name="tankOrVisName"
+                value={formData.tankOrVisName}
+                onChange={handleChange}
+                placeholder="Tank or Vil Irrigation Scheme name"
+                disabled={isLoading}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Additional Information Section */}
+        {/* Organization Details Section */}
         <div className="form-section">
-          <h3 className="form-section-title">Additional Information</h3>
+          <h3 className="form-section-title">Organization Details</h3>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="producerSociety">Producer Society</label>
+              <input
+                type="text"
+                id="producerSociety"
+                name="producerSociety"
+                value={formData.producerSociety}
+                onChange={handleChange}
+                placeholder="Enter producer society name"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="farmerOrganizationName">
+                Farmer Organization Name
+              </label>
+              <input
+                type="text"
+                id="farmerOrganizationName"
+                name="farmerOrganizationName"
+                value={formData.farmerOrganizationName}
+                onChange={handleChange}
+                placeholder="Enter farmer organization name"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="commandAreaHa">Command Area (Ha)</label>
+              <input
+                type="number"
+                id="commandAreaHa"
+                name="commandAreaHa"
+                value={formData.commandAreaHa || ""}
+                onChange={handleChange}
+                placeholder="Enter command area in hectares"
+                disabled={isLoading}
+                step="0.01"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Agricultural Activities Section */}
+        <div className="form-section">
+          <h3 className="form-section-title">Agricultural Activities</h3>
+          <div className="checkbox-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="isCsaConducted"
+                name="isCsaConducted"
+                checked={!!formData.isCsaConducted}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Conducted</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="isIecConducted"
+                name="isIecConducted"
+                checked={!!formData.isIecConducted}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">IEC Conducted</span>
+            </label>
+          </div>
+
+          <div className="checkbox-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="ftsTraining"
+                name="ftsTraining"
+                checked={!!formData.ftsTraining}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">FTS Training</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="fbsTraining"
+                name="fbsTraining"
+                checked={!!formData.fbsTraining}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">FBS Training</span>
+            </label>
+          </div>
+
+          <div className="checkbox-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaCropDiversification"
+                name="csaCropDiversification"
+                checked={!!formData.csaCropDiversification}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Crop Diversification</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaSeedProduction"
+                name="csaSeedProduction"
+                checked={!!formData.csaSeedProduction}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Seed Production</span>
+            </label>
+          </div>
+
+          <div className="checkbox-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaInterseason"
+                name="csaInterseason"
+                checked={!!formData.csaInterseason}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Interseason</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaMicroIrrigation"
+                name="csaMicroIrrigation"
+                checked={!!formData.csaMicroIrrigation}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Micro Irrigation</span>
+            </label>
+          </div>
+
+          <div className="checkbox-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaHomeGardening"
+                name="csaHomeGardening"
+                checked={!!formData.csaHomeGardening}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Home Gardening</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                id="csaAgronomicInterventions"
+                name="csaAgronomicInterventions"
+                checked={!!formData.csaAgronomicInterventions}
+                onChange={handleCheckboxChange}
+                disabled={isLoading}
+              />
+              <span className="checkbox-text">CSA Agronomic Interventions</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Personal Status Section */}
+        <div className="form-section">
+          <h3 className="form-section-title">Personal Status</h3>
           <div className="checkbox-row">
             <label className="checkbox-label">
               <input
@@ -338,8 +607,8 @@ const FarmerForm: React.FC = () => {
             {isLoading
               ? "Saving..."
               : isEditMode
-              ? "Update Farmer"
-              : "Add Farmer"}
+                ? "Update Farmer"
+                : "Add Farmer"}
           </button>
         </div>
       </form>

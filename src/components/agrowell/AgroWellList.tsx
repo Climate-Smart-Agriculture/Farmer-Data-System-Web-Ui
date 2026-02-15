@@ -14,51 +14,21 @@ interface FilterOption {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: "farmerId", label: "Farmer ID", type: "text" },
-  { key: "nicNumber", label: "NIC", type: "text" },
-  { key: "farmerName", label: "Farmer Name", type: "text" },
-  { key: "district", label: "District", type: "text" },
-  { key: "villageName", label: "Village Name", type: "text" },
-  { key: "cultivations", label: "Cultivations", type: "text" },
-  { key: "irrigationMethod", label: "Irrigation Method", type: "text" },
+  { key: "recordId", label: "Record ID", type: "text" },
+  { key: "year", label: "Year", type: "text" },
   { key: "programName", label: "Program Name", type: "text" },
+  { key: "district", label: "District", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "cascadeName", label: "Cascade Name", type: "text" },
   { key: "tankOrVisName", label: "Tank/Vis Name", type: "text" },
+  { key: "commandAreaHa", label: "Command Area (Ha)", type: "number" },
   { key: "producerSociety", label: "Producer Society", type: "text" },
   { key: "farmerOrganizationName", label: "Farmer Organization", type: "text" },
   { key: "aiRange", label: "AI Range", type: "text" },
   { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
-  {
-    key: "isFemale",
-    label: "Female",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isMale",
-    label: "Male",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isSamurdhiBeneficiary",
-    label: "Samurdhi Beneficiary",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
+  { key: "villageName", label: "Village Name", type: "text" },
+  { key: "cultivations", label: "Cultivations", type: "text" },
   {
     key: "isReplicatedCrop",
     label: "Replicated Crop",
@@ -69,6 +39,24 @@ const FILTER_OPTIONS: FilterOption[] = [
       { value: "0", label: "No" },
     ],
   },
+  { key: "extentHa", label: "Extent (Ha)", type: "number" },
+  { key: "noOfPlant", label: "No. of Plant", type: "number" },
+  {
+    key: "totalCultivationCostRs",
+    label: "Total Cultivation Cost (Rs)",
+    type: "number",
+  },
+  {
+    key: "agrowellDepreciationPerSeasonCostRs",
+    label: "Agrowell Depreciation Cost (Rs)",
+    type: "number",
+  },
+  { key: "totalCostRs", label: "Total Cost (Rs)", type: "number" },
+  { key: "yieldKg", label: "Yield (Kg)", type: "number" },
+  { key: "incomeRs", label: "Income (Rs)", type: "number" },
+  { key: "netIncomeRs", label: "Net Income (Rs)", type: "number" },
+  { key: "irrigationMethod", label: "Irrigation Method", type: "text" },
+  { key: "provinceCode", label: "Province Code", type: "text" },
 ];
 
 interface FilterValues {
@@ -90,8 +78,8 @@ const AgroWellList: React.FC = () => {
   const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
-      ? ["farmerId", "nicNumber", "farmerName", "district", "cultivations"]
-      : ["nicNumber", "farmerName", "district", "cultivations"],
+      ? ["farmerId", "year", "district", "cultivations"]
+      : ["year", "district", "cultivations"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -105,34 +93,58 @@ const AgroWellList: React.FC = () => {
     setError("");
     try {
       const filter: Partial<AgroWell> = {
-        farmerId: filterValues.farmerId || undefined,
-        nicNumber: filterValues.nicNumber || undefined,
-        farmerName: filterValues.farmerName || undefined,
-        district: filterValues.district || undefined,
-        villageName: filterValues.villageName || undefined,
-        cultivations: filterValues.cultivations || undefined,
-        irrigationMethod: filterValues.irrigationMethod || undefined,
+        farmerId: filterValues.farmerId
+          ? Number(filterValues.farmerId)
+          : undefined,
+        recordId: filterValues.recordId
+          ? Number(filterValues.recordId)
+          : undefined,
+        year: filterValues.year || undefined,
         programName: filterValues.programName || undefined,
+        district: filterValues.district || undefined,
         dsdDivision: filterValues.dsdDivision || undefined,
         ascDivision: filterValues.ascDivision || undefined,
         cascadeName: filterValues.cascadeName || undefined,
         tankOrVisName: filterValues.tankOrVisName || undefined,
+        commandAreaHa: filterValues.commandAreaHa
+          ? Number(filterValues.commandAreaHa)
+          : undefined,
         producerSociety: filterValues.producerSociety || undefined,
         farmerOrganizationName:
           filterValues.farmerOrganizationName || undefined,
         aiRange: filterValues.aiRange || undefined,
         gramaNiladhariDivision:
           filterValues.gramaNiladhariDivision || undefined,
-        isFemale: filterValues.isFemale
-          ? Number(filterValues.isFemale)
+        villageName: filterValues.villageName || undefined,
+        cultivations: filterValues.cultivations || undefined,
+        isReplicatedCrop: filterValues.isReplicatedCrop || undefined,
+        extentHa: filterValues.extentHa
+          ? Number(filterValues.extentHa)
           : undefined,
-        isMale: filterValues.isMale ? Number(filterValues.isMale) : undefined,
-        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
-          ? Number(filterValues.isSamurdhiBeneficiary)
+        noOfPlant: filterValues.noOfPlant
+          ? Number(filterValues.noOfPlant)
           : undefined,
-        isReplicatedCrop: filterValues.isReplicatedCrop
-          ? Number(filterValues.isReplicatedCrop)
+        totalCultivationCostRs: filterValues.totalCultivationCostRs
+          ? Number(filterValues.totalCultivationCostRs)
           : undefined,
+        agrowellDepreciationPerSeasonCostRs:
+          filterValues.agrowellDepreciationPerSeasonCostRs
+            ? Number(filterValues.agrowellDepreciationPerSeasonCostRs)
+            : undefined,
+        totalCostRs: filterValues.totalCostRs
+          ? Number(filterValues.totalCostRs)
+          : undefined,
+        yieldKg: filterValues.yieldKg
+          ? Number(filterValues.yieldKg)
+          : undefined,
+        incomeRs: filterValues.incomeRs
+          ? Number(filterValues.incomeRs)
+          : undefined,
+        netIncomeRs: filterValues.netIncomeRs
+          ? Number(filterValues.netIncomeRs)
+          : undefined,
+        irrigationMethod: filterValues.irrigationMethod || undefined,
+        provinceCode: filterValues.provinceCode || undefined,
       };
       const result = await agroWellService.getAllAgroWells(
         currentPage - 1,
@@ -320,6 +332,9 @@ const AgroWellList: React.FC = () => {
             <thead>
               <tr>
                 <th>Actions</th>
+                <th>Record ID</th>
+                <th>Farmer ID</th>
+                <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
                 <th>DSD Division</th>
@@ -332,15 +347,6 @@ const AgroWellList: React.FC = () => {
                 <th>AI Range</th>
                 <th>GN Division</th>
                 <th>Village Name</th>
-                <th>Farmer Name</th>
-                <th>Address</th>
-                <th>NIC</th>
-                <th>Telephone</th>
-                <th>Female</th>
-                <th>Male</th>
-                <th>Samurdhi</th>
-                <th>Woman Headed</th>
-                <th>Disabled</th>
                 <th>Cultivations</th>
                 <th>Replicated Crop</th>
                 <th>Irrigation Method</th>
@@ -352,26 +358,30 @@ const AgroWellList: React.FC = () => {
                 <th>Yield (Kg)</th>
                 <th>Income (Rs)</th>
                 <th>Net Income (Rs)</th>
+                <th>Province Code</th>
               </tr>
             </thead>
             <tbody>
               {agroWells.length === 0 ? (
                 <tr>
-                  <td colSpan={33} className="no-data">
+                  <td colSpan={28} className="no-data">
                     No agro well records found
                   </td>
                 </tr>
               ) : (
                 agroWells.map((well) => (
-                  <tr key={well.agroWellId}>
+                  <tr key={well.agroWellPk}>
                     <td>
                       <Link
-                        to={`/agro-wells/${well.agroWellId}`}
+                        to={`/agro-wells/${well.agroWellPk}`}
                         className="btn-link"
                       >
                         View
                       </Link>
                     </td>
+                    <td>{well.recordId || "-"}</td>
+                    <td>{well.farmerId || "-"}</td>
+                    <td>{well.year || "-"}</td>
                     <td>{well.programName || "-"}</td>
                     <td>{well.district || "-"}</td>
                     <td>{well.dsdDivision || "-"}</td>
@@ -384,50 +394,11 @@ const AgroWellList: React.FC = () => {
                     <td>{well.aiRange || "-"}</td>
                     <td>{well.gramaNiladhariDivision || "-"}</td>
                     <td>{well.villageName || "-"}</td>
-                    <td>{well.farmerName || "-"}</td>
-                    <td>{well.address || "-"}</td>
-                    <td>{well.nicNumber || "-"}</td>
-                    <td>{well.telephoneNumber || "-"}</td>
-                    <td>
-                      {well.isFemale === 1
-                        ? "Yes"
-                        : well.isFemale === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {well.isMale === 1
-                        ? "Yes"
-                        : well.isMale === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {well.isSamurdhiBeneficiary === 1
-                        ? "Yes"
-                        : well.isSamurdhiBeneficiary === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {well.isWomanHeadedHousehold === 1
-                        ? "Yes"
-                        : well.isWomanHeadedHousehold === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {well.isDisabled === 1
-                        ? "Yes"
-                        : well.isDisabled === 0
-                          ? "No"
-                          : "-"}
-                    </td>
                     <td>{well.cultivations || "-"}</td>
                     <td>
-                      {well.isReplicatedCrop === 1
+                      {well.isReplicatedCrop === "1"
                         ? "Yes"
-                        : well.isReplicatedCrop === 0
+                        : well.isReplicatedCrop === "0"
                           ? "No"
                           : "-"}
                     </td>
@@ -442,6 +413,7 @@ const AgroWellList: React.FC = () => {
                     <td>{well.yieldKg?.toLocaleString() || "-"}</td>
                     <td>{formatCurrency(well.incomeRs)}</td>
                     <td>{formatCurrency(well.netIncomeRs)}</td>
+                    <td>{well.provinceCode || "-"}</td>
                   </tr>
                 ))
               )}

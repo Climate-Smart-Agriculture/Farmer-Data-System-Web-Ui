@@ -6,7 +6,9 @@ import "../farmer/Farmer.css";
 import "./AgroWell.css";
 
 const initialFormData: AgroWell = {
-  farmerId: "",
+  farmerId: undefined,
+  recordId: undefined,
+  year: String(new Date().getFullYear()),
   programName: "",
   district: "",
   dsdDivision: "",
@@ -19,17 +21,8 @@ const initialFormData: AgroWell = {
   aiRange: "",
   gramaNiladhariDivision: "",
   villageName: "",
-  farmerName: "",
-  address: "",
-  nicNumber: "",
-  telephoneNumber: "",
-  isFemale: 0,
-  isMale: 0,
-  isSamurdhiBeneficiary: 0,
-  isWomanHeadedHousehold: 0,
-  isDisabled: 0,
   cultivations: "",
-  isReplicatedCrop: 0,
+  isReplicatedCrop: "0",
   extentHa: undefined,
   noOfPlant: undefined,
   totalCultivationCostRs: undefined,
@@ -39,6 +32,7 @@ const initialFormData: AgroWell = {
   incomeRs: undefined,
   netIncomeRs: undefined,
   irrigationMethod: "",
+  provinceCode: "",
 };
 
 const AgroWellForm: React.FC = () => {
@@ -50,7 +44,7 @@ const AgroWellForm: React.FC = () => {
 
   const [formData, setFormData] = useState<AgroWell>({
     ...initialFormData,
-    farmerId: farmerIdFromUrl,
+    farmerId: farmerIdFromUrl ? Number(farmerIdFromUrl) : undefined,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -70,8 +64,6 @@ const AgroWellForm: React.FC = () => {
       setFormData({
         ...initialFormData,
         ...data,
-        // Convert farmerId to string if it's a number
-        farmerId: data.farmerId != null ? String(data.farmerId) : "",
       });
     } catch (error: any) {
       console.error("Failed to load agro well data:", error);
@@ -85,12 +77,6 @@ const AgroWellForm: React.FC = () => {
 
     if (!isEditing && !String(formData.farmerId || "").trim()) {
       newErrors.farmerId = "Farmer ID is required";
-    }
-    if (!String(formData.nicNumber || "").trim()) {
-      newErrors.nicNumber = "NIC is required";
-    }
-    if (!String(formData.farmerName || "").trim()) {
-      newErrors.farmerName = "Farmer name is required";
     }
     if (!String(formData.district || "").trim()) {
       newErrors.district = "District is required";
@@ -109,7 +95,7 @@ const AgroWellForm: React.FC = () => {
 
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
-      setFormData((prev) => ({ ...prev, [name]: checked ? 1 : 0 }));
+      setFormData((prev) => ({ ...prev, [name]: checked ? "1" : "0" }));
     } else if (type === "number") {
       setFormData((prev) => ({
         ...prev,
@@ -180,6 +166,24 @@ const AgroWellForm: React.FC = () => {
         <div className="form-section">
           <h3 className="form-section-title">Basic Information</h3>
           <div className="form-row">
+            <div className="form-group">
+              <label>Record ID</label>
+              <input
+                type="text"
+                name="recordId"
+                value={formData.recordId || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Year</label>
+              <input
+                type="number"
+                name="year"
+                value={formData.year || ""}
+                onChange={handleChange}
+              />
+            </div>
             <div className="form-group">
               <label>Program Name</label>
               <input
@@ -291,57 +295,6 @@ const AgroWellForm: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="form-section">
-          <h3 className="form-section-title">Farmer Information</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Farmer Name *</label>
-              <input
-                type="text"
-                name="farmerName"
-                value={formData.farmerName || ""}
-                onChange={handleChange}
-                className={errors.farmerName ? "error" : ""}
-              />
-              {errors.farmerName && (
-                <span className="error-message">{errors.farmerName}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>NIC Number *</label>
-              <input
-                type="text"
-                name="nicNumber"
-                value={formData.nicNumber || ""}
-                onChange={handleChange}
-                className={errors.nicNumber ? "error" : ""}
-              />
-              {errors.nicNumber && (
-                <span className="error-message">{errors.nicNumber}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Telephone Number</label>
-              <input
-                type="text"
-                name="telephoneNumber"
-                value={formData.telephoneNumber || ""}
-                onChange={handleChange}
-              />
-            </div>
             <div className="form-group">
               <label>Farmer Organization</label>
               <input
@@ -351,61 +304,14 @@ const AgroWellForm: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-          <div className="checkbox-row">
-            <div className="checkbox-group">
+            <div className="form-group">
+              <label>Province Code</label>
               <input
-                type="checkbox"
-                id="isFemale"
-                name="isFemale"
-                checked={formData.isFemale === 1}
+                type="text"
+                name="provinceCode"
+                value={formData.provinceCode || ""}
                 onChange={handleChange}
               />
-              <label htmlFor="isFemale">Female</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isMale"
-                name="isMale"
-                checked={formData.isMale === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isMale">Male</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isSamurdhiBeneficiary"
-                name="isSamurdhiBeneficiary"
-                checked={formData.isSamurdhiBeneficiary === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isSamurdhiBeneficiary">
-                Samurdhi Beneficiary
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isWomanHeadedHousehold"
-                name="isWomanHeadedHousehold"
-                checked={formData.isWomanHeadedHousehold === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isWomanHeadedHousehold">
-                Woman Headed Household
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isDisabled"
-                name="isDisabled"
-                checked={formData.isDisabled === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isDisabled">Disabled</label>
             </div>
           </div>
         </div>
@@ -460,7 +366,7 @@ const AgroWellForm: React.FC = () => {
                 type="checkbox"
                 id="isReplicatedCrop"
                 name="isReplicatedCrop"
-                checked={formData.isReplicatedCrop === 1}
+                checked={formData.isReplicatedCrop === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="isReplicatedCrop">Replicated Crop</label>

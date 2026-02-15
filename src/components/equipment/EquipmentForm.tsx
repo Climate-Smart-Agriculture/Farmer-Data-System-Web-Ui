@@ -6,8 +6,9 @@ import "../farmer/Farmer.css";
 import "./Equipment.css";
 
 const initialFormData: Equipment = {
-  farmerId: "",
-  year: undefined,
+  recordId: undefined,
+  farmerId: undefined,
+  year: "",
   programName: "",
   district: "",
   dsdDivision: "",
@@ -17,19 +18,17 @@ const initialFormData: Equipment = {
   aiRange: "",
   gramaNiladhariDivision: "",
   villageName: "",
-  farmerName: "",
-  address: "",
-  nicNumber: "",
-  telephoneNumber: "",
-  isFemale: 0,
-  isMale: 0,
   equipmentName: "",
-  isReplicated: 0,
+  equipmentNameStandard: "",
+  isReplicated: "0",
   noOfEquipment: undefined,
+  descriptiveExtentHa: "",
   extentHa: undefined,
   stepApprovalNumber: "",
+  descriptiveUnitPriceRs: "",
   unitPriceRs: undefined,
   totalProjectCostRs: undefined,
+  descriptiveFarmerCostRs: "",
   farmerCostRs: undefined,
   provinceCode: "",
 };
@@ -43,7 +42,7 @@ const EquipmentForm: React.FC = () => {
 
   const [formData, setFormData] = useState<Equipment>({
     ...initialFormData,
-    farmerId: farmerIdFromUrl || "",
+    farmerId: farmerIdFromUrl ? Number(farmerIdFromUrl) : undefined,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -74,12 +73,6 @@ const EquipmentForm: React.FC = () => {
     if (!isEditing && !farmerId) {
       newErrors.farmer = "Farmer ID is required";
     }
-    if (!formData.nicNumber?.trim()) {
-      newErrors.nicNumber = "NIC is required";
-    }
-    if (!formData.farmerName?.trim()) {
-      newErrors.farmerName = "Farmer name is required";
-    }
     if (!formData.district?.trim()) {
       newErrors.district = "District is required";
     }
@@ -92,7 +85,7 @@ const EquipmentForm: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
 
@@ -283,56 +276,12 @@ const EquipmentForm: React.FC = () => {
           </div>
         </div>
 
-        {/* Farmer Information */}
+        {/* Farmer Organization */}
         <div className="form-section">
-          <h3 className="form-section-title">Farmer Information</h3>
+          <h3 className="form-section-title">Farmer Organization</h3>
           <div className="form-row">
             <div className="form-group">
-              <label>Farmer Name *</label>
-              <input
-                type="text"
-                name="farmerName"
-                value={formData.farmerName || ""}
-                onChange={handleChange}
-                className={errors.farmerName ? "error" : ""}
-              />
-              {errors.farmerName && (
-                <span className="error-message">{errors.farmerName}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>NIC Number *</label>
-              <input
-                type="text"
-                name="nicNumber"
-                value={formData.nicNumber || ""}
-                onChange={handleChange}
-                className={errors.nicNumber ? "error" : ""}
-              />
-              {errors.nicNumber && (
-                <span className="error-message">{errors.nicNumber}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Telephone Number</label>
-              <input
-                type="text"
-                name="telephoneNumber"
-                value={formData.telephoneNumber || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Farmer Organization</label>
+              <label>Farmer Organization Name</label>
               <input
                 type="text"
                 name="farmerOrganizationName"
@@ -341,34 +290,21 @@ const EquipmentForm: React.FC = () => {
               />
             </div>
           </div>
-          <div className="checkbox-row">
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isFemale"
-                name="isFemale"
-                checked={formData.isFemale === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isFemale">Female</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isMale"
-                name="isMale"
-                checked={formData.isMale === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isMale">Male</label>
-            </div>
-          </div>
         </div>
 
         {/* Equipment Details */}
         <div className="form-section">
           <h3 className="form-section-title">Equipment Details</h3>
           <div className="form-row">
+            <div className="form-group">
+              <label>Record ID</label>
+              <input
+                type="text"
+                name="recordId"
+                value={formData.recordId || ""}
+                onChange={handleChange}
+              />
+            </div>
             <div className="form-group">
               <label>Equipment Name *</label>
               <input
@@ -383,21 +319,20 @@ const EquipmentForm: React.FC = () => {
               )}
             </div>
             <div className="form-group">
+              <label>Equipment Name Standard</label>
+              <input
+                type="text"
+                name="equipmentNameStandard"
+                value={formData.equipmentNameStandard || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
               <label>Number of Equipment</label>
               <input
                 type="number"
                 name="noOfEquipment"
                 value={formData.noOfEquipment || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Extent (Ha)</label>
-              <input
-                type="number"
-                step="0.01"
-                name="extentHa"
-                value={formData.extentHa || ""}
                 onChange={handleChange}
               />
             </div>
@@ -417,10 +352,31 @@ const EquipmentForm: React.FC = () => {
                 type="checkbox"
                 id="isReplicated"
                 name="isReplicated"
-                checked={formData.isReplicated === 1}
+                checked={formData.isReplicated === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="isReplicated">Replicated</label>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Descriptive Extent (Ha)</label>
+              <input
+                type="text"
+                name="descriptiveExtentHa"
+                value={formData.descriptiveExtentHa || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Extent (Ha)</label>
+              <input
+                type="number"
+                step="0.01"
+                name="extentHa"
+                value={formData.extentHa || ""}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>
@@ -429,6 +385,15 @@ const EquipmentForm: React.FC = () => {
         <div className="form-section">
           <h3 className="form-section-title">Cost Information</h3>
           <div className="form-row">
+            <div className="form-group">
+              <label>Descriptive Unit Price (Rs)</label>
+              <input
+                type="text"
+                name="descriptiveUnitPriceRs"
+                value={formData.descriptiveUnitPriceRs || ""}
+                onChange={handleChange}
+              />
+            </div>
             <div className="form-group">
               <label>Unit Price (Rs)</label>
               <input
@@ -446,6 +411,15 @@ const EquipmentForm: React.FC = () => {
                 step="0.01"
                 name="totalProjectCostRs"
                 value={formData.totalProjectCostRs || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Descriptive Farmer Cost (Rs)</label>
+              <input
+                type="text"
+                name="descriptiveFarmerCostRs"
+                value={formData.descriptiveFarmerCostRs || ""}
                 onChange={handleChange}
               />
             </div>

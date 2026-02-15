@@ -12,11 +12,10 @@ interface FilterOption {
 }
 
 const FILTER_OPTIONS: FilterOption[] = [
-  { key: "nic", label: "NIC", type: "text" },
-  { key: "fullName", label: "Name", type: "text" },
+  { key: "nicNumber", label: "NIC Number", type: "text" },
+  { key: "farmerName", label: "Farmer Name", type: "text" },
   { key: "address", label: "Address", type: "text" },
-  { key: "contactNumber", label: "Contact Number", type: "text" },
-  { key: "email", label: "Email", type: "text" },
+  { key: "telephoneNumber", label: "Telephone Number", type: "text" },
   {
     key: "gender",
     label: "Gender",
@@ -24,13 +23,20 @@ const FILTER_OPTIONS: FilterOption[] = [
     options: [
       { value: "", label: "All Genders" },
       { value: "M", label: "Male" },
-      { value: "F", label: "Femal e" },
+      { value: "F", label: "Female" },
     ],
   },
   { key: "district", label: "District", type: "text" },
   { key: "villageName", label: "Village Name", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
+  { key: "aiRange", label: "AI Range", type: "text" },
+  { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
+  { key: "cascadeName", label: "Cascade Name", type: "text" },
+  { key: "tankOrVisName", label: "Tank/VIS Name", type: "text" },
+  { key: "producerSociety", label: "Producer Society", type: "text" },
+  { key: "farmerOrganizationName", label: "Farmer Organization", type: "text" },
+  { key: "provinceCode", label: "Province Code", type: "text" },
   {
     key: "isDisabled",
     label: "Disabled",
@@ -61,6 +67,26 @@ const FILTER_OPTIONS: FilterOption[] = [
       { value: "0", label: "No" },
     ],
   },
+  {
+    key: "isCsaConducted",
+    label: "CSA Conducted",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
+  {
+    key: "isIecConducted",
+    label: "IEC Conducted",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
 ];
 
 interface FilterValues {
@@ -76,8 +102,8 @@ const FarmerList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>([
-    "nic",
-    "fullName",
+    "nicNumber",
+    "farmerName",
     "address",
     "district",
   ]);
@@ -92,30 +118,33 @@ const FarmerList: React.FC = () => {
     setError("");
     try {
       const filter: Farmer = {
-        nic: filterValues.nic || "",
-        fullName: filterValues.fullName || "",
+        nicNumber: filterValues.nicNumber || "",
+        farmerName: filterValues.farmerName || "",
         address: filterValues.address || "",
-        contactNumber: filterValues.contactNumber || "",
-        email: filterValues.email || "",
+        telephoneNumber: filterValues.telephoneNumber || "",
         gender: filterValues.gender || "",
         district: filterValues.district || "",
         villageName: filterValues.villageName || "",
         ascDivision: filterValues.ascDivision || "",
         dsdDivision: filterValues.dsdDivision || "",
-        isDisabled: filterValues.isDisabled
-          ? Number(filterValues.isDisabled)
-          : undefined,
-        isWomanHeadedHousehold: filterValues.isWomanHeadedHousehold
-          ? Number(filterValues.isWomanHeadedHousehold)
-          : undefined,
-        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
-          ? Number(filterValues.isSamurdhiBeneficiary)
-          : undefined,
+        aiRange: filterValues.aiRange || "",
+        gramaNiladhariDivision: filterValues.gramaNiladhariDivision || "",
+        cascadeName: filterValues.cascadeName || "",
+        tankOrVisName: filterValues.tankOrVisName || "",
+        producerSociety: filterValues.producerSociety || "",
+        farmerOrganizationName: filterValues.farmerOrganizationName || "",
+        provinceCode: filterValues.provinceCode || "",
+        isDisabled: filterValues.isDisabled || undefined,
+        isWomanHeadedHousehold:
+          filterValues.isWomanHeadedHousehold || undefined,
+        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary || undefined,
+        isCsaConducted: filterValues.isCsaConducted || undefined,
+        isIecConducted: filterValues.isIecConducted || undefined,
       };
       const response = await farmerService.getAllFarmers(
         currentPage - 1,
         pageSize,
-        filter
+        filter,
       );
       setTotalCount(response.totalCount || 0);
       setFarmers(response.farmers || []);
@@ -201,7 +230,7 @@ const FarmerList: React.FC = () => {
                   </select>
                 )}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -261,11 +290,10 @@ const FarmerList: React.FC = () => {
             <thead>
               <tr>
                 <th>Actions</th>
-                <th>NIC</th>
-                <th>Name</th>
+                <th>NIC Number</th>
+                <th>Farmer Name</th>
                 <th>Address</th>
-                <th>Contact</th>
-                <th>Email</th>
+                <th>Telephone</th>
                 <th>Gender</th>
                 <th>District</th>
                 <th>Village</th>
@@ -279,7 +307,7 @@ const FarmerList: React.FC = () => {
             <tbody>
               {farmers.length === 0 ? (
                 <tr>
-                  <td colSpan={14} className="no-data">
+                  <td colSpan={13} className="no-data">
                     No farmers found
                   </td>
                 </tr>
@@ -294,36 +322,35 @@ const FarmerList: React.FC = () => {
                         View
                       </Link>
                     </td>
-                    <td>{farmer.nic}</td>
-                    <td>{farmer.fullName}</td>
+                    <td>{farmer.nicNumber}</td>
+                    <td>{farmer.farmerName}</td>
                     <td>{farmer.address}</td>
-                    <td>{farmer.contactNumber}</td>
-                    <td>{farmer.email || "-"}</td>
+                    <td>{farmer.telephoneNumber}</td>
                     <td>{farmer.gender || "-"}</td>
                     <td>{farmer.district || "-"}</td>
                     <td>{farmer.villageName || "-"}</td>
                     <td>{farmer.ascDivision || "-"}</td>
                     <td>{farmer.dsdDivision || "-"}</td>
                     <td>
-                      {farmer.isDisabled === 1
+                      {farmer.isDisabled === "1"
                         ? "Yes"
-                        : farmer.isDisabled === 0
-                        ? "No"
-                        : "-"}
+                        : farmer.isDisabled === "0"
+                          ? "No"
+                          : "-"}
                     </td>
                     <td>
-                      {farmer.isWomanHeadedHousehold === 1
+                      {farmer.isWomanHeadedHousehold === "1"
                         ? "Yes"
-                        : farmer.isWomanHeadedHousehold === 0
-                        ? "No"
-                        : "-"}
+                        : farmer.isWomanHeadedHousehold === "0"
+                          ? "No"
+                          : "-"}
                     </td>
                     <td>
-                      {farmer.isSamurdhiBeneficiary === 1
+                      {farmer.isSamurdhiBeneficiary === "1"
                         ? "Yes"
-                        : farmer.isSamurdhiBeneficiary === 0
-                        ? "No"
-                        : "-"}
+                        : farmer.isSamurdhiBeneficiary === "0"
+                          ? "No"
+                          : "-"}
                     </td>
                   </tr>
                 ))
@@ -368,7 +395,7 @@ const FarmerList: React.FC = () => {
           <button
             onClick={() =>
               setCurrentPage((prev) =>
-                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1)
+                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1),
               )
             }
             disabled={currentPage === Math.ceil(totalCount / pageSize)}

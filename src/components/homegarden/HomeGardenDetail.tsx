@@ -33,7 +33,7 @@ const HomeGardenDetail: React.FC = () => {
   const handleDelete = async () => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this home garden record?"
+        "Are you sure you want to delete this home garden record?",
       )
     ) {
       return;
@@ -139,66 +139,6 @@ const HomeGardenDetail: React.FC = () => {
             <div className="detail-item">
               <label>Village Name:</label>
               <span>{homeGarden.villageName || "-"}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="detail-section">
-          <h3>Farmer Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Farmer Name:</label>
-              <span>{homeGarden.farmerName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>NIC Number:</label>
-              <span>{homeGarden.nicNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Telephone:</label>
-              <span>{homeGarden.telephoneNumber || "-"}</span>
-            </div>
-            <div className="detail-item full-width">
-              <label>Address:</label>
-              <span>{homeGarden.address || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Gender:</label>
-              <span>
-                {homeGarden.isMale === 1
-                  ? "Male"
-                  : homeGarden.isFemale === 1
-                  ? "Female"
-                  : "-"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Status Information */}
-        <div className="detail-section">
-          <h3>Status Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Samurdhi Beneficiary:</label>
-              <span>{formatBoolean(homeGarden.isSamurdhiBeneficiary)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Woman Headed Household:</label>
-              <span>{formatBoolean(homeGarden.isWomanHeadedHousehold)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Person with Disability:</label>
-              <span>{formatBoolean(homeGarden.isDisabled)}</span>
-            </div>
-            <div className="detail-item">
-              <label>CSA Conducted:</label>
-              <span>{formatBoolean(homeGarden.isCsaConducted)}</span>
-            </div>
-            <div className="detail-item">
-              <label>IEC Conducted:</label>
-              <span>{formatBoolean(homeGarden.isIecConducted)}</span>
             </div>
           </div>
         </div>
