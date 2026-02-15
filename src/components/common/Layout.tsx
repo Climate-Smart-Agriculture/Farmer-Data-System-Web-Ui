@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import './Layout.css';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import "./Layout.css";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -22,7 +22,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="header-content">
           <h1 className="header-title">Farmer Data Management System</h1>
           <div className="header-actions">
-            <span className="user-info">Welcome, {user?.username}</span>
+            <span className="user-info">
+              Welcome, {user?.username} {user?.role ? `(${user.role})` : ""}
+            </span>
             <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>
@@ -67,6 +69,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 Poultry Farming
               </Link>
             </li>
+            {user?.role === "ADMIN" && (
+              <li>
+                <Link to="/users" className="nav-link">
+                  User Management
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
         <main className="content">{children}</main>

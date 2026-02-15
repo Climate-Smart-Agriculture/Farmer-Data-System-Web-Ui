@@ -60,6 +60,12 @@ export const API_ENDPOINTS = {
     BY_FARMER: (farmerId: string) => `/poultry-farming/farmer/${farmerId}`,
     SEARCH: "/poultry-farming/search",
   },
+  // User Management endpoints (Admin only)
+  USERS: {
+    BASE: "/admin/users",
+    BY_ID: (id: string | number) => `/admin/users/${id}`,
+    BY_ROLE: (role: string) => `/admin/users/role/${role}`,
+  },
 };
 
 export default API_CONFIG;

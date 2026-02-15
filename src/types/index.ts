@@ -1,4 +1,6 @@
 // Authentication Types
+export type UserRole = "ADMIN" | "AG" | "GN";
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -21,7 +23,36 @@ export interface User {
   id: string;
   username: string;
   email?: string;
-  role?: string;
+  role?: UserRole;
+}
+
+// User Management Types
+export interface ManagedUser {
+  userId: number;
+  username: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+  enabled: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateUserPayload {
+  username: string;
+  password: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+}
+
+export interface UpdateUserPayload {
+  username?: string;
+  password?: string;
+  email?: string;
+  fullName?: string;
+  role?: UserRole;
+  enabled?: boolean;
 }
 
 // Farmer Types

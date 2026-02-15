@@ -64,11 +64,11 @@ class AuthService {
     try {
       console.log(
         "Making login request to:",
-        `${API_CONFIG.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`
+        `${API_CONFIG.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`,
       );
       const response = await axios.post<AuthResponse>(
         `${API_CONFIG.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`,
-        credentials
+        credentials,
       );
 
       console.log("Login response:", response.data);
@@ -87,7 +87,7 @@ class AuthService {
       const axiosError = error as AxiosError<{ message: string }>;
       throw new Error(
         axiosError.response?.data?.message ||
-          "Login failed. Please check your credentials."
+          "Login failed. Please check your credentials.",
       );
     }
   }
@@ -120,7 +120,7 @@ class AuthService {
         id: decoded.id || decoded.sub || "unknown",
         username: decoded.username || decoded.sub || "unknown",
         email: decoded.email,
-        role: decoded.role,
+        role: decoded.role as any,
       };
       console.log("Returning user:", user);
       return user;
@@ -142,7 +142,7 @@ class AuthService {
         {
           headers: API_CONFIG.headers,
           timeout: API_CONFIG.timeout,
-        }
+        },
       );
 
       const { token } = response.data.data;

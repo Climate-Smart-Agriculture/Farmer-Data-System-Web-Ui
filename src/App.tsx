@@ -28,6 +28,8 @@ import AgroWellDetail from "./components/agrowell/AgroWellDetail";
 import PoultryList from "./components/poultry/PoultryList";
 import PoultryForm from "./components/poultry/PoultryForm";
 import PoultryDetail from "./components/poultry/PoultryDetail";
+import UserList from "./components/users/UserList";
+import UserForm from "./components/users/UserForm";
 import "./App.css";
 
 function App() {
@@ -287,6 +289,37 @@ function App() {
             }
           />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* User Management Routes (Admin only) */}
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute requiredRole="ADMIN">
+                <Layout>
+                  <UserList />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users/new"
+            element={
+              <PrivateRoute requiredRole="ADMIN">
+                <Layout>
+                  <UserForm />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users/:id/edit"
+            element={
+              <PrivateRoute requiredRole="ADMIN">
+                <Layout>
+                  <UserForm />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
