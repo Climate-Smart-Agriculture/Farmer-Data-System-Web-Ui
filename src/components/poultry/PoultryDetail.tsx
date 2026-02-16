@@ -34,7 +34,7 @@ const PoultryDetail: React.FC = () => {
     if (
       !id ||
       !window.confirm(
-        "Are you sure you want to delete this poultry farming record?"
+        "Are you sure you want to delete this poultry farming record?",
       )
     ) {
       return;
@@ -86,8 +86,12 @@ const PoultryDetail: React.FC = () => {
           <h3>Basic Information</h3>
           <div className="detail-grid">
             <div className="detail-item">
-              <label>Poultry ID</label>
-              <span>{poultry.poultryId || "-"}</span>
+              <label>Poultry Record PK</label>
+              <span>{poultry.poultryRecordPk || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Record ID</label>
+              <span>{poultry.recordId || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Year</label>
@@ -140,53 +144,6 @@ const PoultryDetail: React.FC = () => {
               <label>GN Division</label>
               <span>{poultry.gramaNiladhariDivision || "-"}</span>
             </div>
-            <div className="detail-item">
-              <label>Village Name</label>
-              <span>{poultry.villageName || "-"}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="detail-section">
-          <h3>Farmer Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Farmer Name</label>
-              <span>{poultry.farmerName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>NIC Number</label>
-              <span>{poultry.nicNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Address</label>
-              <span>{poultry.address || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Telephone Number</label>
-              <span>{poultry.telephoneNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Female</label>
-              <span>{formatBoolean(poultry.isFemale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Male</label>
-              <span>{formatBoolean(poultry.isMale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Samurdhi Beneficiary</label>
-              <span>{formatBoolean(poultry.isSamurdhiBeneficiary)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Woman Headed Household</label>
-              <span>{formatBoolean(poultry.isWomanHeadedHousehold)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Disabled</label>
-              <span>{formatBoolean(poultry.isDisabled)}</span>
-            </div>
           </div>
         </div>
 
@@ -209,14 +166,6 @@ const PoultryDetail: React.FC = () => {
             <div className="detail-item">
               <label>Flock Size Increment</label>
               <span>{formatNumber(poultry.flockSizeIncrement)}</span>
-            </div>
-            <div className="detail-item">
-              <label>CSA Conducted</label>
-              <span>{formatBoolean(poultry.isCsaConducted)}</span>
-            </div>
-            <div className="detail-item">
-              <label>IEC Conducted</label>
-              <span>{formatBoolean(poultry.isIecConducted)}</span>
             </div>
           </div>
         </div>

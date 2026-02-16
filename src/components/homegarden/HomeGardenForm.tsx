@@ -9,12 +9,12 @@ const HomeGardenForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const farmerIdFromUrl = searchParams.get("farmerId") || "";
+  const farmerIdFromUrl = searchParams.get("farmerId");
   const isEditMode = !!id;
 
   const [formData, setFormData] = useState<HomeGarden>({
-    farmerId: farmerIdFromUrl,
-    year: new Date().getFullYear(),
+    farmerId: farmerIdFromUrl ? Number(farmerIdFromUrl) : undefined,
+    year: String(new Date().getFullYear()),
     programName: "",
     district: "",
     dsdDivision: "",
@@ -25,17 +25,6 @@ const HomeGardenForm: React.FC = () => {
     aiRange: "",
     gramaNiladhariDivision: "",
     villageName: "",
-    farmerName: "",
-    address: "",
-    nicNumber: "",
-    telephoneNumber: "",
-    isFemale: 0,
-    isMale: 0,
-    isSamurdhiBeneficiary: 0,
-    isWomanHeadedHousehold: 0,
-    isDisabled: 0,
-    isCsaConducted: 0,
-    isIecConducted: 0,
     extentHa: 0,
     seedPackCount: 0,
     bananaPlantsCount: 0,
@@ -101,7 +90,7 @@ const HomeGardenForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     let newValue: string | number = value;
@@ -113,22 +102,6 @@ const HomeGardenForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: newValue }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: checked ? 1 : 0 }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleGenderChange = (gender: "male" | "female") => {
-    if (gender === "male") {
-      setFormData((prev) => ({ ...prev, isMale: 1, isFemale: 0 }));
-    } else {
-      setFormData((prev) => ({ ...prev, isMale: 0, isFemale: 1 }));
     }
   };
 
@@ -194,7 +167,7 @@ const HomeGardenForm: React.FC = () => {
             <div className="form-group">
               <label htmlFor="year">Year *</label>
               <input
-                type="number"
+                type="text"
                 id="year"
                 name="year"
                 value={formData.year || ""}
@@ -357,163 +330,6 @@ const HomeGardenForm: React.FC = () => {
                 disabled={isLoading}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information Section */}
-        <div className="form-section">
-          <h3 className="form-section-title">Farmer Information</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="farmerName">Farmer Name *</label>
-              <input
-                type="text"
-                id="farmerName"
-                name="farmerName"
-                value={formData.farmerName || ""}
-                onChange={handleChange}
-                placeholder="Enter farmer name"
-                className={errors.farmerName ? "error" : ""}
-                disabled={isLoading}
-              />
-              {errors.farmerName && (
-                <span className="error-message">{errors.farmerName}</span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="nicNumber">NIC Number *</label>
-              <input
-                type="text"
-                id="nicNumber"
-                name="nicNumber"
-                value={formData.nicNumber || ""}
-                onChange={handleChange}
-                placeholder="e.g., 123456789V"
-                className={errors.nicNumber ? "error" : ""}
-                disabled={isLoading}
-              />
-              {errors.nicNumber && (
-                <span className="error-message">{errors.nicNumber}</span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="telephoneNumber">Telephone Number</label>
-              <input
-                type="text"
-                id="telephoneNumber"
-                name="telephoneNumber"
-                value={formData.telephoneNumber || ""}
-                onChange={handleChange}
-                placeholder="e.g., 0771234567"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group full-width">
-              <label htmlFor="address">Address</label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleChange}
-                placeholder="Enter full address"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Gender</label>
-              <div className="checkbox-row">
-                <label className="checkbox-label">
-                  <input
-                    type="radio"
-                    name="gender"
-                    checked={formData.isMale === 1}
-                    onChange={() => handleGenderChange("male")}
-                    disabled={isLoading}
-                  />
-                  <span className="checkbox-text">Male</span>
-                </label>
-                <label className="checkbox-label">
-                  <input
-                    type="radio"
-                    name="gender"
-                    checked={formData.isFemale === 1}
-                    onChange={() => handleGenderChange("female")}
-                    disabled={isLoading}
-                  />
-                  <span className="checkbox-text">Female</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Status Information Section */}
-        <div className="form-section">
-          <h3 className="form-section-title">Status Information</h3>
-          <div className="checkbox-row">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="isSamurdhiBeneficiary"
-                checked={!!formData.isSamurdhiBeneficiary}
-                onChange={handleCheckboxChange}
-                disabled={isLoading}
-              />
-              <span className="checkbox-text">Samurdhi Beneficiary</span>
-            </label>
-
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="isWomanHeadedHousehold"
-                checked={!!formData.isWomanHeadedHousehold}
-                onChange={handleCheckboxChange}
-                disabled={isLoading}
-              />
-              <span className="checkbox-text">Woman Headed Household</span>
-            </label>
-
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="isDisabled"
-                checked={!!formData.isDisabled}
-                onChange={handleCheckboxChange}
-                disabled={isLoading}
-              />
-              <span className="checkbox-text">Person with Disability</span>
-            </label>
-
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="isCsaConducted"
-                checked={!!formData.isCsaConducted}
-                onChange={handleCheckboxChange}
-                disabled={isLoading}
-              />
-              <span className="checkbox-text">CSA Conducted</span>
-            </label>
-
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="isIecConducted"
-                checked={!!formData.isIecConducted}
-                onChange={handleCheckboxChange}
-                disabled={isLoading}
-              />
-              <span className="checkbox-text">IEC Conducted</span>
-            </label>
           </div>
         </div>
 
@@ -978,8 +794,8 @@ const HomeGardenForm: React.FC = () => {
             {isLoading
               ? "Saving..."
               : isEditMode
-              ? "Update Home Garden"
-              : "Add Home Garden"}
+                ? "Update Home Garden"
+                : "Add Home Garden"}
           </button>
         </div>
       </form>

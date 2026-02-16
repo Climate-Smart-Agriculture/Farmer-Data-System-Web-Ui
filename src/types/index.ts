@@ -1,4 +1,6 @@
 // Authentication Types
+export type UserRole = "ADMIN" | "AG" | "GN";
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -21,25 +23,73 @@ export interface User {
   id: string;
   username: string;
   email?: string;
-  role?: string;
+  role?: UserRole;
+}
+
+// User Management Types
+export interface ManagedUser {
+  userId: number;
+  username: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+  enabled: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateUserPayload {
+  username: string;
+  password: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+}
+
+export interface UpdateUserPayload {
+  username?: string;
+  password?: string;
+  email?: string;
+  fullName?: string;
+  role?: UserRole;
+  enabled?: boolean;
 }
 
 // Farmer Types
 export interface Farmer {
-  farmerId?: string;
-  nic: string;
-  fullName: string;
-  address: string;
-  contactNumber: string;
-  email?: string;
+  farmerId?: number;
+  farmerName: string;
+  nicNumber: string;
+  address?: string;
+  telephoneNumber?: string;
   gender?: string;
   district?: string;
   villageName?: string;
   ascDivision?: string;
   dsdDivision?: string;
-  isDisabled?: number;
-  isWomanHeadedHousehold?: number;
-  isSamurdhiBeneficiary?: number;
+  aiRange?: string;
+  gramaNiladhariDivision?: string;
+  cascadeName?: string;
+  tankOrVisName?: string;
+  producerSociety?: string;
+  farmerOrganizationName?: string;
+  commandAreaHa?: number;
+  isDisabled?: string;
+  isWomanHeadedHousehold?: string;
+  isSamurdhiBeneficiary?: string;
+  isCsaConducted?: string;
+  isIecConducted?: string;
+  ftsTraining?: string;
+  fbsTraining?: string;
+  csaCropDiversification?: string;
+  csaSeedProduction?: string;
+  csaInterseason?: string;
+  csaMicroIrrigation?: string;
+  csaHomeGardening?: string;
+  csaAgronomicInterventions?: string;
+  provinceCode?: string;
+  insertedAt?: string;
+  updatedAt?: string;
 }
 
 export interface FarmerSearch {
@@ -49,9 +99,10 @@ export interface FarmerSearch {
 
 // Equipment Types
 export interface Equipment {
-  equipmentId?: string;
-  farmerId?: string;
-  year?: number;
+  equipmentRecordPk?: number;
+  recordId?: number;
+  farmerId?: number;
+  year?: string;
   programName?: string;
   district?: string;
   dsdDivision?: string;
@@ -61,19 +112,17 @@ export interface Equipment {
   aiRange?: string;
   gramaNiladhariDivision?: string;
   villageName?: string;
-  farmerName?: string;
-  address?: string;
-  nicNumber?: string;
-  telephoneNumber?: string;
-  isFemale?: number;
-  isMale?: number;
   equipmentName?: string;
-  isReplicated?: number;
+  equipmentNameStandard?: string;
+  isReplicated?: string;
   noOfEquipment?: number;
+  descriptiveExtentHa?: string;
   extentHa?: number;
   stepApprovalNumber?: string;
+  descriptiveUnitPriceRs?: string;
   unitPriceRs?: number;
   totalProjectCostRs?: number;
+  descriptiveFarmerCostRs?: string;
   farmerCostRs?: number;
   provinceCode?: string;
   createdAt?: string;
@@ -87,9 +136,10 @@ export interface EquipmentSearch {
 
 // Home Garden Types
 export interface HomeGarden {
-  homeGardenId?: string;
-  farmerId?: string;
-  year?: number;
+  ehgRecordPk?: number;
+  recordId?: number;
+  farmerId?: number;
+  year?: string;
   programName?: string;
   district?: string;
   dsdDivision?: string;
@@ -100,17 +150,6 @@ export interface HomeGarden {
   aiRange?: string;
   gramaNiladhariDivision?: string;
   villageName?: string;
-  farmerName?: string;
-  address?: string;
-  nicNumber?: string;
-  telephoneNumber?: string;
-  isFemale?: number;
-  isMale?: number;
-  isSamurdhiBeneficiary?: number;
-  isWomanHeadedHousehold?: number;
-  isDisabled?: number;
-  isCsaConducted?: number;
-  isIecConducted?: number;
   extentHa?: number;
   seedPackCount?: number;
   bananaPlantsCount?: number;
@@ -152,6 +191,9 @@ export interface HomeGarden {
   newCultivation13?: string;
   newCultivation14?: string;
   newCultivation15?: string;
+  provinceCode?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface HomeGardenSearch {
@@ -161,46 +203,36 @@ export interface HomeGardenSearch {
 
 // CSA Agriculture Types
 export interface CSAAgriculture {
-  csaAgricultureId?: string;
-  farmerId?: string;
-  year?: number;
+  csaRecordPk?: number;
+  recordId?: number;
+  farmerId?: number;
+  year?: string;
   programName?: string;
   district?: string;
   dsdDivision?: string;
   ascDivision?: string;
   cascadeName?: string;
   tankOrVisName?: string;
-  commandAreaHa?: number;
+  commandAreaHa?: string;
   producerSociety?: string;
   farmerOrganizationName?: string;
   aiRange?: string;
   gramaNiladhariDivision?: string;
   villageName?: string;
-  farmerName?: string;
-  address?: string;
-  nicNumber?: string;
-  telephoneNumber?: string;
-  isFemale?: number;
-  isMale?: number;
-  isSamurdhiBeneficiary?: number;
-  isWomanHeadedHousehold?: number;
-  isDisabled?: number;
   cropType?: string;
-  isReplicatedCrop?: number;
-  grownIrrigatedPaddyIndicator?: number;
-  grownRainfedPaddyIndicator?: number;
-  grownIrrigatedHighlandIndicator?: number;
-  grownRainfedHighlandIndicator?: number;
-  csaCropDiversification?: number;
-  csaSeedProduction?: number;
-  csaInterseason?: number;
-  csaMicroIrrigation?: number;
-  csaHomeGardening?: number;
-  csaAgronomicInterventions?: number;
-  csaTrainingReceived?: number;
-  iecConducted?: number;
-  ftsTraining?: number;
-  fbsTraining?: number;
+  isReplicatedCrop?: string;
+  grownIrrigatedPaddyIndicator?: string;
+  grownRainfedPaddyIndicator?: string;
+  grownIrrigatedHighlandIndicator?: string;
+  grownRainfedHighlandIndicator?: string;
+  csaCropDiversification?: string;
+  csaSeedProduction?: string;
+  csaInterseason?: string;
+  csaMicroIrrigation?: string;
+  csaHomeGardening?: string;
+  csaAgronomicInterventions?: string;
+  ftsTraining?: string;
+  fbsTraining?: string;
   varietyName?: string;
   seedQuantityKg?: number;
   extentHa?: number;
@@ -220,13 +252,13 @@ export interface CSAAgriculture {
   productivityKgPerHa?: number;
   baselineProductivityKgPerHa?: number;
   yieldIncreaseMt?: number;
-  yieldIncreasePercent?: number;
+  yieldIncreasePercent?: string;
   baselinePriceRsPerKg?: number;
   baselineValuePerHaRs?: number;
   productivityValuePerHaRs?: number;
-  incrementalProductivityValueRs?: number;
+  incrementalProductivityPercent?: string;
   cdiScore?: number;
-  croppingIntensityPercent?: number;
+  croppingIntensityPercent?: string;
   provinceCode?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -239,8 +271,10 @@ export interface CSAAgricultureSearch {
 
 // Agro Well Types
 export interface AgroWell {
-  agroWellId?: string;
-  farmerId?: string;
+  agroWellPk?: number;
+  recordId?: number;
+  farmerId?: number;
+  year?: string;
   programName?: string;
   district?: string;
   dsdDivision?: string;
@@ -253,17 +287,8 @@ export interface AgroWell {
   aiRange?: string;
   gramaNiladhariDivision?: string;
   villageName?: string;
-  farmerName?: string;
-  address?: string;
-  nicNumber?: string;
-  telephoneNumber?: string;
-  isFemale?: number;
-  isMale?: number;
-  isSamurdhiBeneficiary?: number;
-  isWomanHeadedHousehold?: number;
-  isDisabled?: number;
   cultivations?: string;
-  isReplicatedCrop?: number;
+  isReplicatedCrop?: string;
   extentHa?: number;
   noOfPlant?: number;
   totalCultivationCostRs?: number;
@@ -273,6 +298,7 @@ export interface AgroWell {
   incomeRs?: number;
   netIncomeRs?: number;
   irrigationMethod?: string;
+  provinceCode?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -284,9 +310,10 @@ export interface AgroWellSearch {
 
 // Poultry Farming Types
 export interface PoultryFarming {
-  poultryId?: string;
-  farmerId?: string;
-  year?: number;
+  poultryRecordPk?: number;
+  recordId?: number;
+  farmerId?: number;
+  year?: string;
   programName?: string;
   district?: string;
   dsdDivision?: string;
@@ -296,19 +323,7 @@ export interface PoultryFarming {
   producerSociety?: string;
   agriculturalInstructor?: string;
   gramaNiladhariDivision?: string;
-  villageName?: string;
-  farmerName?: string;
-  address?: string;
-  nicNumber?: string;
-  telephoneNumber?: string;
-  isFemale?: number;
-  isMale?: number;
-  isSamurdhiBeneficiary?: number;
-  isWomanHeadedHousehold?: number;
-  isDisabled?: number;
   chicksGiven?: number;
-  isCsaConducted?: number;
-  isIecConducted?: number;
   chickUnitPriceRs?: number;
   totalProjectCostRs?: number;
   farmerContributionRs?: number;

@@ -14,11 +14,10 @@ interface FilterOption {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: "farmerId", label: "Farmer ID", type: "text" },
-  { key: "nicNumber", label: "NIC", type: "text" },
-  { key: "farmerName", label: "Farmer Name", type: "text" },
-  { key: "district", label: "District", type: "text" },
-  { key: "villageName", label: "Village Name", type: "text" },
+  { key: "recordId", label: "Record ID", type: "text" },
+  { key: "year", label: "Year", type: "text" },
   { key: "programName", label: "Program Name", type: "text" },
+  { key: "district", label: "District", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "cascadeName", label: "Cascade Name", type: "text" },
@@ -30,56 +29,27 @@ const FILTER_OPTIONS: FilterOption[] = [
     type: "text",
   },
   { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
+  { key: "chicksGiven", label: "Chicks Given", type: "number" },
+  { key: "chickUnitPriceRs", label: "Chick Unit Price (Rs)", type: "number" },
   {
-    key: "isFemale",
-    label: "Female",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
+    key: "totalProjectCostRs",
+    label: "Total Project Cost (Rs)",
+    type: "number",
   },
   {
-    key: "isMale",
-    label: "Male",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
+    key: "farmerContributionRs",
+    label: "Farmer Contribution (Rs)",
+    type: "number",
   },
-  {
-    key: "isSamurdhiBeneficiary",
-    label: "Samurdhi Beneficiary",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isCsaConducted",
-    label: "CSA Conducted",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isIecConducted",
-    label: "IEC Conducted",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
+  { key: "totalCostRs", label: "Total Cost (Rs)", type: "number" },
+  { key: "deadChicks", label: "Dead Chicks", type: "number" },
+  { key: "totalEggProduction", label: "Total Egg Production", type: "number" },
+  { key: "flockSizeIncrement", label: "Flock Size Increment", type: "number" },
+  { key: "feedExpenditureRs", label: "Feed Expenditure (Rs)", type: "number" },
+  { key: "eggUnitPriceRs", label: "Egg Unit Price (Rs)", type: "number" },
+  { key: "incomeRs", label: "Income (Rs)", type: "number" },
+  { key: "netIncomeRs", label: "Net Income (Rs)", type: "number" },
+  { key: "provinceCode", label: "Province Code", type: "text" },
 ];
 
 interface FilterValues {
@@ -101,8 +71,8 @@ const PoultryList: React.FC = () => {
   const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
-      ? ["farmerId", "nicNumber", "farmerName", "district", "villageName"]
-      : ["nicNumber", "farmerName", "district", "villageName"],
+      ? ["farmerId", "district", "programName"]
+      : ["district", "programName"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -116,11 +86,14 @@ const PoultryList: React.FC = () => {
     setError("");
     try {
       const filter: Partial<PoultryFarming> = {
-        farmerId: filterValues.farmerId || undefined,
-        nicNumber: filterValues.nicNumber || undefined,
-        farmerName: filterValues.farmerName || undefined,
+        farmerId: filterValues.farmerId
+          ? Number(filterValues.farmerId)
+          : undefined,
+        recordId: filterValues.recordId
+          ? Number(filterValues.recordId)
+          : undefined,
+        year: filterValues.year || undefined,
         district: filterValues.district || undefined,
-        villageName: filterValues.villageName || undefined,
         programName: filterValues.programName || undefined,
         dsdDivision: filterValues.dsdDivision || undefined,
         ascDivision: filterValues.ascDivision || undefined,
@@ -131,19 +104,43 @@ const PoultryList: React.FC = () => {
           filterValues.agriculturalInstructor || undefined,
         gramaNiladhariDivision:
           filterValues.gramaNiladhariDivision || undefined,
-        isFemale: filterValues.isFemale
-          ? Number(filterValues.isFemale)
+        chicksGiven: filterValues.chicksGiven
+          ? Number(filterValues.chicksGiven)
           : undefined,
-        isMale: filterValues.isMale ? Number(filterValues.isMale) : undefined,
-        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
-          ? Number(filterValues.isSamurdhiBeneficiary)
+        chickUnitPriceRs: filterValues.chickUnitPriceRs
+          ? Number(filterValues.chickUnitPriceRs)
           : undefined,
-        isCsaConducted: filterValues.isCsaConducted
-          ? Number(filterValues.isCsaConducted)
+        totalProjectCostRs: filterValues.totalProjectCostRs
+          ? Number(filterValues.totalProjectCostRs)
           : undefined,
-        isIecConducted: filterValues.isIecConducted
-          ? Number(filterValues.isIecConducted)
+        farmerContributionRs: filterValues.farmerContributionRs
+          ? Number(filterValues.farmerContributionRs)
           : undefined,
+        totalCostRs: filterValues.totalCostRs
+          ? Number(filterValues.totalCostRs)
+          : undefined,
+        deadChicks: filterValues.deadChicks
+          ? Number(filterValues.deadChicks)
+          : undefined,
+        totalEggProduction: filterValues.totalEggProduction
+          ? Number(filterValues.totalEggProduction)
+          : undefined,
+        flockSizeIncrement: filterValues.flockSizeIncrement
+          ? Number(filterValues.flockSizeIncrement)
+          : undefined,
+        feedExpenditureRs: filterValues.feedExpenditureRs
+          ? Number(filterValues.feedExpenditureRs)
+          : undefined,
+        eggUnitPriceRs: filterValues.eggUnitPriceRs
+          ? Number(filterValues.eggUnitPriceRs)
+          : undefined,
+        incomeRs: filterValues.incomeRs
+          ? Number(filterValues.incomeRs)
+          : undefined,
+        netIncomeRs: filterValues.netIncomeRs
+          ? Number(filterValues.netIncomeRs)
+          : undefined,
+        provinceCode: filterValues.provinceCode || undefined,
       };
       const result = await poultryService.getAllPoultry(
         currentPage - 1,
@@ -334,8 +331,6 @@ const PoultryList: React.FC = () => {
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
-                <th>Farmer Name</th>
-                <th>NIC</th>
                 <th>Chicks Given</th>
                 <th>Dead Chicks</th>
                 <th>Egg Production</th>
@@ -346,16 +341,16 @@ const PoultryList: React.FC = () => {
             <tbody>
               {poultryRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="no-data">
+                  <td colSpan={9} className="no-data">
                     No poultry farming records found
                   </td>
                 </tr>
               ) : (
                 poultryRecords.map((record) => (
-                  <tr key={record.poultryId}>
+                  <tr key={record.poultryRecordPk}>
                     <td>
                       <Link
-                        to={`/poultry/${record.poultryId}`}
+                        to={`/poultry/${record.poultryRecordPk}`}
                         className="btn-link"
                       >
                         View
@@ -364,8 +359,6 @@ const PoultryList: React.FC = () => {
                     <td>{record.year || "-"}</td>
                     <td>{record.programName || "-"}</td>
                     <td>{record.district || "-"}</td>
-                    <td>{record.farmerName || "-"}</td>
-                    <td>{record.nicNumber || "-"}</td>
                     <td>{record.chicksGiven || "-"}</td>
                     <td>{record.deadChicks || "-"}</td>
                     <td>

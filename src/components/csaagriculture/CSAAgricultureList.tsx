@@ -14,52 +14,21 @@ interface FilterOption {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: "farmerId", label: "Farmer ID", type: "text" },
-  { key: "nicNumber", label: "NIC", type: "text" },
-  { key: "farmerName", label: "Farmer Name", type: "text" },
-  { key: "district", label: "District", type: "text" },
-  { key: "villageName", label: "Village Name", type: "text" },
-  { key: "cropType", label: "Crop Type", type: "text" },
-  { key: "varietyName", label: "Variety Name", type: "text" },
+  { key: "recordId", label: "Record ID", type: "text" },
+  { key: "year", label: "Year", type: "text" },
   { key: "programName", label: "Program Name", type: "text" },
-  { key: "year", label: "Year", type: "number" },
+  { key: "district", label: "District", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "cascadeName", label: "Cascade Name", type: "text" },
   { key: "tankOrVisName", label: "Tank/Vis Name", type: "text" },
+  { key: "commandAreaHa", label: "Command Area (Ha)", type: "text" },
   { key: "producerSociety", label: "Producer Society", type: "text" },
   { key: "farmerOrganizationName", label: "Farmer Organization", type: "text" },
   { key: "aiRange", label: "AI Range", type: "text" },
   { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
-  {
-    key: "isFemale",
-    label: "Female",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isMale",
-    label: "Male",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isSamurdhiBeneficiary",
-    label: "Samurdhi Beneficiary",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
+  { key: "villageName", label: "Village Name", type: "text" },
+  { key: "cropType", label: "Crop Type", type: "text" },
   {
     key: "isReplicatedCrop",
     label: "Replicated Crop",
@@ -70,9 +39,30 @@ const FILTER_OPTIONS: FilterOption[] = [
       { value: "0", label: "No" },
     ],
   },
+  { key: "varietyName", label: "Variety Name", type: "text" },
+  { key: "seedQuantityKg", label: "Seed Quantity (Kg)", type: "number" },
+  { key: "extentHa", label: "Extent (Ha)", type: "number" },
+  { key: "preLossesHa", label: "Pre Losses (Ha)", type: "number" },
+  { key: "harvestedAreaHa", label: "Harvested Area (Ha)", type: "number" },
+  { key: "seedUnitPriceRs", label: "Seed Unit Price (Rs)", type: "number" },
   {
-    key: "csaTrainingReceived",
-    label: "CSA Training Received",
+    key: "projectSeedExpenseRs",
+    label: "Project Seed Expense (Rs)",
+    type: "number",
+  },
+  { key: "farmerCostRs", label: "Farmer Cost (Rs)", type: "number" },
+  {
+    key: "totalCultivationCostRs",
+    label: "Total Cultivation Cost (Rs)",
+    type: "number",
+  },
+  { key: "postLossesKg", label: "Post Losses (Kg)", type: "number" },
+  { key: "yieldKg", label: "Yield (Kg)", type: "number" },
+  { key: "incomeRs", label: "Income (Rs)", type: "number" },
+  { key: "netIncomeRs", label: "Net Income (Rs)", type: "number" },
+  {
+    key: "ftsTraining",
+    label: "FTS Training",
     type: "select",
     options: [
       { value: "", label: "All" },
@@ -80,6 +70,17 @@ const FILTER_OPTIONS: FilterOption[] = [
       { value: "0", label: "No" },
     ],
   },
+  {
+    key: "fbsTraining",
+    label: "FBS Training",
+    type: "select",
+    options: [
+      { value: "", label: "All" },
+      { value: "1", label: "Yes" },
+      { value: "0", label: "No" },
+    ],
+  },
+  { key: "provinceCode", label: "Province Code", type: "text" },
 ];
 
 interface FilterValues {
@@ -101,8 +102,8 @@ const CSAAgricultureList: React.FC = () => {
   const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
-      ? ["farmerId", "nicNumber", "farmerName", "district", "cropType"]
-      : ["nicNumber", "farmerName", "district", "cropType"],
+      ? ["farmerId", "recordId", "district", "cropType"]
+      : ["recordId", "district", "cropType"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -116,38 +117,69 @@ const CSAAgricultureList: React.FC = () => {
     setError("");
     try {
       const filter: Partial<CSAAgriculture> = {
-        farmerId: filterValues.farmerId || undefined,
-        nicNumber: filterValues.nicNumber || undefined,
-        farmerName: filterValues.farmerName || undefined,
-        district: filterValues.district || undefined,
-        villageName: filterValues.villageName || undefined,
-        cropType: filterValues.cropType || undefined,
-        varietyName: filterValues.varietyName || undefined,
+        farmerId: filterValues.farmerId
+          ? Number(filterValues.farmerId)
+          : undefined,
+        recordId: filterValues.recordId
+          ? Number(filterValues.recordId)
+          : undefined,
+        year: filterValues.year || undefined,
         programName: filterValues.programName || undefined,
-        year: filterValues.year ? Number(filterValues.year) : undefined,
+        district: filterValues.district || undefined,
         dsdDivision: filterValues.dsdDivision || undefined,
         ascDivision: filterValues.ascDivision || undefined,
         cascadeName: filterValues.cascadeName || undefined,
         tankOrVisName: filterValues.tankOrVisName || undefined,
+        commandAreaHa: filterValues.commandAreaHa || undefined,
         producerSociety: filterValues.producerSociety || undefined,
         farmerOrganizationName:
           filterValues.farmerOrganizationName || undefined,
         aiRange: filterValues.aiRange || undefined,
         gramaNiladhariDivision:
           filterValues.gramaNiladhariDivision || undefined,
-        isFemale: filterValues.isFemale
-          ? Number(filterValues.isFemale)
+        villageName: filterValues.villageName || undefined,
+        cropType: filterValues.cropType || undefined,
+        isReplicatedCrop: filterValues.isReplicatedCrop || undefined,
+        varietyName: filterValues.varietyName || undefined,
+        seedQuantityKg: filterValues.seedQuantityKg
+          ? Number(filterValues.seedQuantityKg)
           : undefined,
-        isMale: filterValues.isMale ? Number(filterValues.isMale) : undefined,
-        isSamurdhiBeneficiary: filterValues.isSamurdhiBeneficiary
-          ? Number(filterValues.isSamurdhiBeneficiary)
+        extentHa: filterValues.extentHa
+          ? Number(filterValues.extentHa)
           : undefined,
-        isReplicatedCrop: filterValues.isReplicatedCrop
-          ? Number(filterValues.isReplicatedCrop)
+        preLossesHa: filterValues.preLossesHa
+          ? Number(filterValues.preLossesHa)
           : undefined,
-        csaTrainingReceived: filterValues.csaTrainingReceived
-          ? Number(filterValues.csaTrainingReceived)
+        harvestedAreaHa: filterValues.harvestedAreaHa
+          ? Number(filterValues.harvestedAreaHa)
           : undefined,
+        seedUnitPriceRs: filterValues.seedUnitPriceRs
+          ? Number(filterValues.seedUnitPriceRs)
+          : undefined,
+        projectSeedExpenseRs: filterValues.projectSeedExpenseRs
+          ? Number(filterValues.projectSeedExpenseRs)
+          : undefined,
+        farmerCostRs: filterValues.farmerCostRs
+          ? Number(filterValues.farmerCostRs)
+          : undefined,
+        totalCultivationCostRs: filterValues.totalCultivationCostRs
+          ? Number(filterValues.totalCultivationCostRs)
+          : undefined,
+        postLossesKg: filterValues.postLossesKg
+          ? Number(filterValues.postLossesKg)
+          : undefined,
+        yieldKg: filterValues.yieldKg
+          ? Number(filterValues.yieldKg)
+          : undefined,
+        incomeRs: filterValues.incomeRs
+          ? Number(filterValues.incomeRs)
+          : undefined,
+        netIncomeRs: filterValues.netIncomeRs
+          ? Number(filterValues.netIncomeRs)
+          : undefined,
+        ftsTraining: filterValues.ftsTraining || undefined,
+        fbsTraining: filterValues.fbsTraining || undefined,
+        provinceCode: filterValues.provinceCode || undefined,
       };
       const result = await csaAgricultureService.getAllCSAAgriculture(
         currentPage - 1,
@@ -335,6 +367,7 @@ const CSAAgricultureList: React.FC = () => {
             <thead>
               <tr>
                 <th>Actions</th>
+                <th>Record ID</th>
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
@@ -348,15 +381,6 @@ const CSAAgricultureList: React.FC = () => {
                 <th>AI Range</th>
                 <th>GN Division</th>
                 <th>Village Name</th>
-                <th>Farmer Name</th>
-                <th>Address</th>
-                <th>NIC</th>
-                <th>Telephone</th>
-                <th>Female</th>
-                <th>Male</th>
-                <th>Samurdhi</th>
-                <th>Woman Headed</th>
-                <th>Disabled</th>
                 <th>Crop Type</th>
                 <th>Replicated Crop</th>
                 <th>Irrigated Paddy</th>
@@ -369,8 +393,6 @@ const CSAAgricultureList: React.FC = () => {
                 <th>CSA Micro Irrigation</th>
                 <th>CSA Home Gardening</th>
                 <th>CSA Agronomic Interventions</th>
-                <th>CSA Training</th>
-                <th>IEC Conducted</th>
                 <th>FTS Training</th>
                 <th>FBS Training</th>
                 <th>Variety</th>
@@ -400,21 +422,22 @@ const CSAAgricultureList: React.FC = () => {
             <tbody>
               {csaData.length === 0 ? (
                 <tr>
-                  <td colSpan={61} className="no-data">
+                  <td colSpan={51} className="no-data">
                     No CSA agriculture records found
                   </td>
                 </tr>
               ) : (
                 csaData.map((csa) => (
-                  <tr key={csa.csaAgricultureId}>
+                  <tr key={csa.csaRecordPk}>
                     <td>
                       <Link
-                        to={`/csa-agriculture/${csa.csaAgricultureId}`}
+                        to={`/csa-agriculture/${csa.csaRecordPk}`}
                         className="btn-link"
                       >
                         View
                       </Link>
                     </td>
+                    <td>{csa.recordId || "-"}</td>
                     <td>{csa.year || "-"}</td>
                     <td>{csa.programName || "-"}</td>
                     <td>{csa.district || "-"}</td>
@@ -428,144 +451,95 @@ const CSAAgricultureList: React.FC = () => {
                     <td>{csa.aiRange || "-"}</td>
                     <td>{csa.gramaNiladhariDivision || "-"}</td>
                     <td>{csa.villageName || "-"}</td>
-                    <td>{csa.farmerName || "-"}</td>
-                    <td>{csa.address || "-"}</td>
-                    <td>{csa.nicNumber || "-"}</td>
-                    <td>{csa.telephoneNumber || "-"}</td>
-                    <td>
-                      {csa.isFemale === 1
-                        ? "Yes"
-                        : csa.isFemale === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {csa.isMale === 1 ? "Yes" : csa.isMale === 0 ? "No" : "-"}
-                    </td>
-                    <td>
-                      {csa.isSamurdhiBeneficiary === 1
-                        ? "Yes"
-                        : csa.isSamurdhiBeneficiary === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {csa.isWomanHeadedHousehold === 1
-                        ? "Yes"
-                        : csa.isWomanHeadedHousehold === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {csa.isDisabled === 1
-                        ? "Yes"
-                        : csa.isDisabled === 0
-                          ? "No"
-                          : "-"}
-                    </td>
                     <td>{csa.cropType || "-"}</td>
                     <td>
-                      {csa.isReplicatedCrop === 1
+                      {csa.isReplicatedCrop === "1"
                         ? "Yes"
-                        : csa.isReplicatedCrop === 0
+                        : csa.isReplicatedCrop === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.grownIrrigatedPaddyIndicator === 1
+                      {csa.grownIrrigatedPaddyIndicator === "1"
                         ? "Yes"
-                        : csa.grownIrrigatedPaddyIndicator === 0
+                        : csa.grownIrrigatedPaddyIndicator === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.grownRainfedPaddyIndicator === 1
+                      {csa.grownRainfedPaddyIndicator === "1"
                         ? "Yes"
-                        : csa.grownRainfedPaddyIndicator === 0
+                        : csa.grownRainfedPaddyIndicator === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.grownIrrigatedHighlandIndicator === 1
+                      {csa.grownIrrigatedHighlandIndicator === "1"
                         ? "Yes"
-                        : csa.grownIrrigatedHighlandIndicator === 0
+                        : csa.grownIrrigatedHighlandIndicator === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.grownRainfedHighlandIndicator === 1
+                      {csa.grownRainfedHighlandIndicator === "1"
                         ? "Yes"
-                        : csa.grownRainfedHighlandIndicator === 0
+                        : csa.grownRainfedHighlandIndicator === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaCropDiversification === 1
+                      {csa.csaCropDiversification === "1"
                         ? "Yes"
-                        : csa.csaCropDiversification === 0
+                        : csa.csaCropDiversification === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaSeedProduction === 1
+                      {csa.csaSeedProduction === "1"
                         ? "Yes"
-                        : csa.csaSeedProduction === 0
+                        : csa.csaSeedProduction === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaInterseason === 1
+                      {csa.csaInterseason === "1"
                         ? "Yes"
-                        : csa.csaInterseason === 0
+                        : csa.csaInterseason === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaMicroIrrigation === 1
+                      {csa.csaMicroIrrigation === "1"
                         ? "Yes"
-                        : csa.csaMicroIrrigation === 0
+                        : csa.csaMicroIrrigation === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaHomeGardening === 1
+                      {csa.csaHomeGardening === "1"
                         ? "Yes"
-                        : csa.csaHomeGardening === 0
+                        : csa.csaHomeGardening === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaAgronomicInterventions === 1
+                      {csa.csaAgronomicInterventions === "1"
                         ? "Yes"
-                        : csa.csaAgronomicInterventions === 0
+                        : csa.csaAgronomicInterventions === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.csaTrainingReceived === 1
+                      {csa.ftsTraining === "1"
                         ? "Yes"
-                        : csa.csaTrainingReceived === 0
+                        : csa.ftsTraining === "0"
                           ? "No"
                           : "-"}
                     </td>
                     <td>
-                      {csa.iecConducted === 1
+                      {csa.fbsTraining === "1"
                         ? "Yes"
-                        : csa.iecConducted === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {csa.ftsTraining === 1
-                        ? "Yes"
-                        : csa.ftsTraining === 0
-                          ? "No"
-                          : "-"}
-                    </td>
-                    <td>
-                      {csa.fbsTraining === 1
-                        ? "Yes"
-                        : csa.fbsTraining === 0
+                        : csa.fbsTraining === "0"
                           ? "No"
                           : "-"}
                     </td>
@@ -592,13 +566,13 @@ const CSAAgricultureList: React.FC = () => {
                     <td>{csa.yieldIncreaseMt?.toLocaleString() || "-"}</td>
                     <td>
                       {csa.yieldIncreasePercent != null
-                        ? `${csa.yieldIncreasePercent.toFixed(2)}%`
+                        ? `${csa.yieldIncreasePercent}%`
                         : "-"}
                     </td>
                     <td>{csa.cdiScore || "-"}</td>
                     <td>
                       {csa.croppingIntensityPercent != null
-                        ? `${csa.croppingIntensityPercent.toFixed(2)}%`
+                        ? `${csa.croppingIntensityPercent}%`
                         : "-"}
                     </td>
                   </tr>

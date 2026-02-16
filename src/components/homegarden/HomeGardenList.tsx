@@ -13,87 +13,20 @@ interface FilterOption {
 }
 
 const FILTER_OPTIONS: FilterOption[] = [
-  { key: "farmerId", label: "Farmer ID", type: "text" },
-  { key: "nicNumber", label: "NIC", type: "text" },
-  { key: "farmerName", label: "Farmer Name", type: "text" },
+  { key: "farmerId", label: "Farmer ID", type: "number" },
+  { key: "recordId", label: "Record ID", type: "number" },
   { key: "district", label: "District", type: "text" },
   { key: "villageName", label: "Village Name", type: "text" },
   { key: "programName", label: "Program Name", type: "text" },
-  { key: "year", label: "Year", type: "number" },
+  { key: "year", label: "Year", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "cascadeName", label: "Cascade Name", type: "text" },
+  { key: "tankOrVisName", label: "Tank/Vis Name", type: "text" },
+  { key: "producerSociety", label: "Producer Society", type: "text" },
+  { key: "aiRange", label: "AI Range", type: "text" },
   { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
-  {
-    key: "isFemale",
-    label: "Female",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isMale",
-    label: "Male",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isSamurdhiBeneficiary",
-    label: "Samurdhi Beneficiary",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isWomanHeadedHousehold",
-    label: "Woman Headed Household",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isDisabled",
-    label: "Disabled",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isCsaConducted",
-    label: "CSA Conducted",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isIecConducted",
-    label: "IEC Conducted",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
+  { key: "provinceCode", label: "Province Code", type: "text" },
 ];
 
 interface FilterValues {
@@ -106,7 +39,7 @@ const HomeGardenList: React.FC = () => {
 
   const [homeGardens, setHomeGardens] = useState<HomeGarden[]>([]);
   const [filterValues, setFilterValues] = useState<FilterValues>(
-    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+    farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
   );
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,8 +47,8 @@ const HomeGardenList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
-      ? ["farmerId", "nicNumber", "farmerName", "district", "villageName"]
-      : ["nicNumber", "farmerName", "district", "villageName"]
+      ? ["farmerId", "district", "villageName", "programName"]
+      : ["district", "villageName", "programName", "year"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -128,44 +61,35 @@ const HomeGardenList: React.FC = () => {
     setIsLoading(true);
     try {
       const filter: Partial<HomeGarden> = {};
-      if (filterValues.farmerId) filter.farmerId = filterValues.farmerId;
-      if (filterValues.nicNumber) filter.nicNumber = filterValues.nicNumber;
-      if (filterValues.farmerName) filter.farmerName = filterValues.farmerName;
+      if (filterValues.farmerId)
+        filter.farmerId = Number(filterValues.farmerId);
+      if (filterValues.recordId)
+        filter.recordId = Number(filterValues.recordId);
       if (filterValues.district) filter.district = filterValues.district;
       if (filterValues.villageName)
         filter.villageName = filterValues.villageName;
       if (filterValues.programName)
         filter.programName = filterValues.programName;
-      if (filterValues.year) filter.year = Number(filterValues.year);
+      if (filterValues.year) filter.year = filterValues.year;
       if (filterValues.dsdDivision)
         filter.dsdDivision = filterValues.dsdDivision;
       if (filterValues.ascDivision)
         filter.ascDivision = filterValues.ascDivision;
       if (filterValues.cascadeName)
         filter.cascadeName = filterValues.cascadeName;
+      if (filterValues.tankOrVisName)
+        filter.tankOrVisName = filterValues.tankOrVisName;
+      if (filterValues.producerSociety)
+        filter.producerSociety = filterValues.producerSociety;
+      if (filterValues.aiRange) filter.aiRange = filterValues.aiRange;
       if (filterValues.gramaNiladhariDivision)
         filter.gramaNiladhariDivision = filterValues.gramaNiladhariDivision;
-      if (filterValues.isFemale)
-        filter.isFemale = Number(filterValues.isFemale);
-      if (filterValues.isMale) filter.isMale = Number(filterValues.isMale);
-      if (filterValues.isSamurdhiBeneficiary)
-        filter.isSamurdhiBeneficiary = Number(
-          filterValues.isSamurdhiBeneficiary
-        );
-      if (filterValues.isWomanHeadedHousehold)
-        filter.isWomanHeadedHousehold = Number(
-          filterValues.isWomanHeadedHousehold
-        );
-      if (filterValues.isDisabled)
-        filter.isDisabled = Number(filterValues.isDisabled);
-      if (filterValues.isCsaConducted)
-        filter.isCsaConducted = Number(filterValues.isCsaConducted);
-      if (filterValues.isIecConducted)
-        filter.isIecConducted = Number(filterValues.isIecConducted);
+      if (filterValues.provinceCode)
+        filter.provinceCode = filterValues.provinceCode;
       const response = await homeGardenService.getAllHomeGardens(
         currentPage - 1,
         pageSize,
-        filter
+        filter,
       );
       setTotalCount(response.totalCount || 0);
       setHomeGardens(response.homeGardens || []);
@@ -283,7 +207,7 @@ const HomeGardenList: React.FC = () => {
                   </select>
                 )}
               </div>
-            )
+            ),
           )}
           <div className="more-dropdown-container">
             <button
@@ -316,7 +240,7 @@ const HomeGardenList: React.FC = () => {
               type="button"
               onClick={() => {
                 setFilterValues(
-                  farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {}
+                  farmerIdFromUrl ? { farmerId: farmerIdFromUrl } : {},
                 );
                 setCurrentPage(1);
                 loadHomeGardens();
@@ -336,12 +260,8 @@ const HomeGardenList: React.FC = () => {
               <th>Actions</th>
               <th>Year</th>
               <th>Program</th>
-              <th>NIC</th>
-              <th>Farmer Name</th>
               <th>District</th>
               <th>Village</th>
-              <th>Phone</th>
-              <th>Gender</th>
               <th>Extent (Ha)</th>
               <th>Income (Rs)</th>
               <th>Gross Income (Rs)</th>
@@ -350,22 +270,22 @@ const HomeGardenList: React.FC = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={12} className="no-data">
+                <td colSpan={8} className="no-data">
                   Loading...
                 </td>
               </tr>
             ) : homeGardens.length === 0 ? (
               <tr>
-                <td colSpan={12} className="no-data">
+                <td colSpan={8} className="no-data">
                   No home gardens found
                 </td>
               </tr>
             ) : (
               homeGardens.map((garden) => (
-                <tr key={garden.homeGardenId}>
+                <tr key={garden.ehgRecordPk}>
                   <td>
                     <Link
-                      to={`/home-gardens/${garden.homeGardenId}`}
+                      to={`/home-gardens/${garden.ehgRecordPk}`}
                       className="btn-link"
                     >
                       View
@@ -373,18 +293,8 @@ const HomeGardenList: React.FC = () => {
                   </td>
                   <td>{garden.year || "-"}</td>
                   <td>{garden.programName || "-"}</td>
-                  <td>{garden.nicNumber || "-"}</td>
-                  <td>{garden.farmerName || "-"}</td>
                   <td>{garden.district || "-"}</td>
                   <td>{garden.villageName || "-"}</td>
-                  <td>{garden.telephoneNumber || "-"}</td>
-                  <td>
-                    {garden.isMale === 1
-                      ? "Male"
-                      : garden.isFemale === 1
-                      ? "Female"
-                      : "-"}
-                  </td>
                   <td>{garden.extentHa ?? "-"}</td>
                   <td>{garden.incomeRs ?? "-"}</td>
                   <td>{garden.grossIncomeRs ?? "-"}</td>
@@ -431,7 +341,7 @@ const HomeGardenList: React.FC = () => {
           <button
             onClick={() =>
               setCurrentPage((prev) =>
-                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1)
+                Math.min(Math.ceil(totalCount / pageSize) || 1, prev + 1),
               )
             }
             disabled={currentPage === Math.ceil(totalCount / pageSize)}

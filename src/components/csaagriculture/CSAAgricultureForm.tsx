@@ -6,8 +6,9 @@ import "../farmer/Farmer.css";
 import "./CSAAgriculture.css";
 
 const initialFormData: CSAAgriculture = {
-  farmerId: "",
-  year: undefined,
+  farmerId: undefined,
+  recordId: undefined,
+  year: String(new Date().getFullYear()),
   programName: "",
   district: "",
   dsdDivision: "",
@@ -20,31 +21,20 @@ const initialFormData: CSAAgriculture = {
   aiRange: "",
   gramaNiladhariDivision: "",
   villageName: "",
-  farmerName: "",
-  address: "",
-  nicNumber: "",
-  telephoneNumber: "",
-  isFemale: 0,
-  isMale: 0,
-  isSamurdhiBeneficiary: 0,
-  isWomanHeadedHousehold: 0,
-  isDisabled: 0,
   cropType: "",
-  isReplicatedCrop: 0,
-  grownIrrigatedPaddyIndicator: 0,
-  grownRainfedPaddyIndicator: 0,
-  grownIrrigatedHighlandIndicator: 0,
-  grownRainfedHighlandIndicator: 0,
-  csaCropDiversification: 0,
-  csaSeedProduction: 0,
-  csaInterseason: 0,
-  csaMicroIrrigation: 0,
-  csaHomeGardening: 0,
-  csaAgronomicInterventions: 0,
-  csaTrainingReceived: 0,
-  iecConducted: 0,
-  ftsTraining: 0,
-  fbsTraining: 0,
+  isReplicatedCrop: "0",
+  grownIrrigatedPaddyIndicator: "0",
+  grownRainfedPaddyIndicator: "0",
+  grownIrrigatedHighlandIndicator: "0",
+  grownRainfedHighlandIndicator: "0",
+  csaCropDiversification: "0",
+  csaSeedProduction: "0",
+  csaInterseason: "0",
+  csaMicroIrrigation: "0",
+  csaHomeGardening: "0",
+  csaAgronomicInterventions: "0",
+  ftsTraining: "0",
+  fbsTraining: "0",
   varietyName: "",
   seedQuantityKg: undefined,
   extentHa: undefined,
@@ -68,7 +58,7 @@ const initialFormData: CSAAgriculture = {
   baselinePriceRsPerKg: undefined,
   baselineValuePerHaRs: undefined,
   productivityValuePerHaRs: undefined,
-  incrementalProductivityValueRs: undefined,
+  incrementalProductivityPercent: undefined,
   cdiScore: undefined,
   croppingIntensityPercent: undefined,
   provinceCode: "",
@@ -83,7 +73,7 @@ const CSAAgricultureForm: React.FC = () => {
 
   const [formData, setFormData] = useState<CSAAgriculture>({
     ...initialFormData,
-    farmerId: farmerIdFromUrl,
+    farmerId: farmerIdFromUrl ? Number(farmerIdFromUrl) : undefined,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -103,8 +93,6 @@ const CSAAgricultureForm: React.FC = () => {
       setFormData({
         ...initialFormData,
         ...data,
-        // Convert farmerId to string if it's a number
-        farmerId: data.farmerId != null ? String(data.farmerId) : "",
       });
     } catch (error: any) {
       console.error("Failed to load CSA agriculture data:", error);
@@ -118,12 +106,6 @@ const CSAAgricultureForm: React.FC = () => {
 
     if (!isEditing && !String(formData.farmerId || "").trim()) {
       newErrors.farmerId = "Farmer ID is required";
-    }
-    if (!String(formData.nicNumber || "").trim()) {
-      newErrors.nicNumber = "NIC is required";
-    }
-    if (!String(formData.farmerName || "").trim()) {
-      newErrors.farmerName = "Farmer name is required";
     }
     if (!String(formData.district || "").trim()) {
       newErrors.district = "District is required";
@@ -140,7 +122,7 @@ const CSAAgricultureForm: React.FC = () => {
 
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
-      setFormData((prev) => ({ ...prev, [name]: checked ? 1 : 0 }));
+      setFormData((prev) => ({ ...prev, [name]: checked ? "1" : "0" }));
     } else if (type === "number") {
       setFormData((prev) => ({
         ...prev,
@@ -345,57 +327,6 @@ const CSAAgricultureForm: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="form-section">
-          <h3 className="form-section-title">Farmer Information</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Farmer Name *</label>
-              <input
-                type="text"
-                name="farmerName"
-                value={formData.farmerName || ""}
-                onChange={handleChange}
-                className={errors.farmerName ? "error" : ""}
-              />
-              {errors.farmerName && (
-                <span className="error-message">{errors.farmerName}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>NIC Number *</label>
-              <input
-                type="text"
-                name="nicNumber"
-                value={formData.nicNumber || ""}
-                onChange={handleChange}
-                className={errors.nicNumber ? "error" : ""}
-              />
-              {errors.nicNumber && (
-                <span className="error-message">{errors.nicNumber}</span>
-              )}
-            </div>
-            <div className="form-group">
-              <label>Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Telephone Number</label>
-              <input
-                type="text"
-                name="telephoneNumber"
-                value={formData.telephoneNumber || ""}
-                onChange={handleChange}
-              />
-            </div>
             <div className="form-group">
               <label>Farmer Organization</label>
               <input
@@ -404,62 +335,6 @@ const CSAAgricultureForm: React.FC = () => {
                 value={formData.farmerOrganizationName || ""}
                 onChange={handleChange}
               />
-            </div>
-          </div>
-          <div className="checkbox-row">
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isFemale"
-                name="isFemale"
-                checked={formData.isFemale === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isFemale">Female</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isMale"
-                name="isMale"
-                checked={formData.isMale === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isMale">Male</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isSamurdhiBeneficiary"
-                name="isSamurdhiBeneficiary"
-                checked={formData.isSamurdhiBeneficiary === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isSamurdhiBeneficiary">
-                Samurdhi Beneficiary
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isWomanHeadedHousehold"
-                name="isWomanHeadedHousehold"
-                checked={formData.isWomanHeadedHousehold === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isWomanHeadedHousehold">
-                Woman Headed Household
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="isDisabled"
-                name="isDisabled"
-                checked={formData.isDisabled === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="isDisabled">Disabled</label>
             </div>
           </div>
         </div>
@@ -533,7 +408,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="isReplicatedCrop"
                 name="isReplicatedCrop"
-                checked={formData.isReplicatedCrop === 1}
+                checked={formData.isReplicatedCrop === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="isReplicatedCrop">Replicated Crop</label>
@@ -550,7 +425,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="grownIrrigatedPaddyIndicator"
                 name="grownIrrigatedPaddyIndicator"
-                checked={formData.grownIrrigatedPaddyIndicator === 1}
+                checked={formData.grownIrrigatedPaddyIndicator === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="grownIrrigatedPaddyIndicator">
@@ -562,7 +437,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="grownRainfedPaddyIndicator"
                 name="grownRainfedPaddyIndicator"
-                checked={formData.grownRainfedPaddyIndicator === 1}
+                checked={formData.grownRainfedPaddyIndicator === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="grownRainfedPaddyIndicator">
@@ -574,7 +449,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="grownIrrigatedHighlandIndicator"
                 name="grownIrrigatedHighlandIndicator"
-                checked={formData.grownIrrigatedHighlandIndicator === 1}
+                checked={formData.grownIrrigatedHighlandIndicator === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="grownIrrigatedHighlandIndicator">
@@ -586,7 +461,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="grownRainfedHighlandIndicator"
                 name="grownRainfedHighlandIndicator"
-                checked={formData.grownRainfedHighlandIndicator === 1}
+                checked={formData.grownRainfedHighlandIndicator === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="grownRainfedHighlandIndicator">
@@ -605,7 +480,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaCropDiversification"
                 name="csaCropDiversification"
-                checked={formData.csaCropDiversification === 1}
+                checked={formData.csaCropDiversification === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaCropDiversification">
@@ -617,7 +492,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaSeedProduction"
                 name="csaSeedProduction"
-                checked={formData.csaSeedProduction === 1}
+                checked={formData.csaSeedProduction === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaSeedProduction">Seed Production</label>
@@ -627,7 +502,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaInterseason"
                 name="csaInterseason"
-                checked={formData.csaInterseason === 1}
+                checked={formData.csaInterseason === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaInterseason">Interseason</label>
@@ -637,7 +512,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaMicroIrrigation"
                 name="csaMicroIrrigation"
-                checked={formData.csaMicroIrrigation === 1}
+                checked={formData.csaMicroIrrigation === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaMicroIrrigation">Micro Irrigation</label>
@@ -647,7 +522,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaHomeGardening"
                 name="csaHomeGardening"
-                checked={formData.csaHomeGardening === 1}
+                checked={formData.csaHomeGardening === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaHomeGardening">Home Gardening</label>
@@ -657,7 +532,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="csaAgronomicInterventions"
                 name="csaAgronomicInterventions"
-                checked={formData.csaAgronomicInterventions === 1}
+                checked={formData.csaAgronomicInterventions === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="csaAgronomicInterventions">
@@ -674,29 +549,9 @@ const CSAAgricultureForm: React.FC = () => {
             <div className="checkbox-group">
               <input
                 type="checkbox"
-                id="csaTrainingReceived"
-                name="csaTrainingReceived"
-                checked={formData.csaTrainingReceived === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="csaTrainingReceived">CSA Training Received</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="iecConducted"
-                name="iecConducted"
-                checked={formData.iecConducted === 1}
-                onChange={handleChange}
-              />
-              <label htmlFor="iecConducted">IEC Conducted</label>
-            </div>
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
                 id="ftsTraining"
                 name="ftsTraining"
-                checked={formData.ftsTraining === 1}
+                checked={formData.ftsTraining === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="ftsTraining">FTS Training</label>
@@ -706,7 +561,7 @@ const CSAAgricultureForm: React.FC = () => {
                 type="checkbox"
                 id="fbsTraining"
                 name="fbsTraining"
-                checked={formData.fbsTraining === 1}
+                checked={formData.fbsTraining === "1"}
                 onChange={handleChange}
               />
               <label htmlFor="fbsTraining">FBS Training</label>
@@ -933,12 +788,12 @@ const CSAAgricultureForm: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Incremental Productivity Value (Rs)</label>
+              <label>Incremental Productivity (%)</label>
               <input
                 type="number"
                 step="0.01"
-                name="incrementalProductivityValueRs"
-                value={formData.incrementalProductivityValueRs || ""}
+                name="incrementalProductivityPercent"
+                value={formData.incrementalProductivityPercent || ""}
                 onChange={handleChange}
               />
             </div>

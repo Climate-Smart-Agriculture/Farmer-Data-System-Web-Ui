@@ -58,7 +58,8 @@ const AgroWellDetail: React.FC = () => {
     return <div className="error-banner">Agro well record not found</div>;
   }
 
-  const formatBoolean = (value?: number | null) => (value === 1 ? "Yes" : "No");
+  const formatBoolean = (value?: string | null) =>
+    value === "1" ? "Yes" : "No";
   const formatNumber = (value?: number | null) =>
     value != null ? value.toLocaleString() : "-";
   const formatCurrency = (value?: number | null) =>
@@ -87,7 +88,19 @@ const AgroWellDetail: React.FC = () => {
           <div className="detail-grid">
             <div className="detail-item">
               <label>Agro Well ID</label>
-              <span>{agroWell.agroWellId || "-"}</span>
+              <span>{agroWell.agroWellPk || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Record ID</label>
+              <span>{agroWell.recordId || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Farmer ID</label>
+              <span>{agroWell.farmerId || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Year</label>
+              <span>{agroWell.year || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Program Name</label>
@@ -140,52 +153,13 @@ const AgroWellDetail: React.FC = () => {
               <label>Village Name</label>
               <span>{agroWell.villageName || "-"}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="detail-section">
-          <h3>Farmer Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Farmer Name</label>
-              <span>{agroWell.farmerName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>NIC Number</label>
-              <span>{agroWell.nicNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Address</label>
-              <span>{agroWell.address || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Telephone Number</label>
-              <span>{agroWell.telephoneNumber || "-"}</span>
-            </div>
             <div className="detail-item">
               <label>Farmer Organization</label>
               <span>{agroWell.farmerOrganizationName || "-"}</span>
             </div>
             <div className="detail-item">
-              <label>Female</label>
-              <span>{formatBoolean(agroWell.isFemale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Male</label>
-              <span>{formatBoolean(agroWell.isMale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Samurdhi Beneficiary</label>
-              <span>{formatBoolean(agroWell.isSamurdhiBeneficiary)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Woman Headed Household</label>
-              <span>{formatBoolean(agroWell.isWomanHeadedHousehold)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Disabled</label>
-              <span>{formatBoolean(agroWell.isDisabled)}</span>
+              <label>Province Code</label>
+              <span>{agroWell.provinceCode || "-"}</span>
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@ export const validateRequired = (value: any): boolean => {
 export const validateNumber = (
   value: any,
   min?: number,
-  max?: number
+  max?: number,
 ): boolean => {
   const num = Number(value);
   if (isNaN(num)) return false;
@@ -57,28 +57,20 @@ export const validateDate = (date: string): boolean => {
 export const validateFarmerForm = (data: any): FormErrors => {
   const errors: FormErrors = {};
 
-  if (!validateRequired(data.nic)) {
-    errors.nic = "NIC is required";
-  } else if (!validateNIC(data.nic)) {
-    errors.nic = "Invalid NIC format";
+  if (!validateRequired(data.nicNumber)) {
+    errors.nicNumber = "NIC Number is required";
+  } else if (!validateNIC(data.nicNumber)) {
+    errors.nicNumber = "Invalid NIC format";
   }
 
-  if (!validateRequired(data.fullName)) {
-    errors.fullName = "Full name is required";
+  if (!validateRequired(data.farmerName)) {
+    errors.farmerName = "Farmer name is required";
   }
 
-  if (!validateRequired(data.address)) {
-    errors.address = "Address is required";
-  }
-
-  if (!validateRequired(data.contactNumber)) {
-    errors.contactNumber = "Contact number is required";
-  } else if (!validatePhoneNumber(data.contactNumber)) {
-    errors.contactNumber = "Invalid phone number format";
-  }
-
-  if (data.email && !validateEmail(data.email)) {
-    errors.email = "Invalid email format";
+  if (!validateRequired(data.telephoneNumber)) {
+    errors.telephoneNumber = "Telephone number is required";
+  } else if (!validatePhoneNumber(data.telephoneNumber)) {
+    errors.telephoneNumber = "Invalid phone number format";
   }
 
   return errors;
@@ -112,7 +104,7 @@ export const validateEquipmentForm = (data: any): FormErrors => {
 // Home Garden form validation
 export const validateHomeGardenForm = (
   data: any,
-  isEditing: boolean = false
+  isEditing: boolean = false,
 ): FormErrors => {
   const errors: FormErrors = {};
 

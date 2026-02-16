@@ -2,13 +2,18 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import authService from "../../services/authService";
+import { UserRole } from "../../types";
 
 interface PrivateRouteProps {
   children: React.ReactElement;
+  requiredRole?: UserRole;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { isLoading } = useAuth();
+const PrivateRoute: React.FC<PrivateRouteProps> = ({
+  children,
+  requiredRole,
+}) => {
+  const { isLoading, user } = useAuth();
 
   // Check both context and service for authentication
   const isAuthenticated = authService.isAuthenticated();
@@ -28,7 +33,16 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Check role-based access
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

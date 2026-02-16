@@ -74,32 +74,20 @@ const FarmerDetail: React.FC = () => {
           <h3>Personal Information</h3>
           <div className="detail-grid">
             <div className="detail-item">
-              <label>NIC:</label>
-              <span>{farmer.nic}</span>
+              <label>NIC Number:</label>
+              <span>{farmer.nicNumber}</span>
             </div>
             <div className="detail-item">
-              <label>Full Name:</label>
-              <span>{`${farmer.fullName}`}</span>
+              <label>Farmer Name:</label>
+              <span>{`${farmer.farmerName}`}</span>
             </div>
             <div className="detail-item">
-              <label>Contact Number:</label>
-              <span>{farmer.contactNumber}</span>
-            </div>
-            <div className="detail-item">
-              <label>Email:</label>
-              <span>{farmer.email || "-"}</span>
+              <label>Telephone Number:</label>
+              <span>{farmer.telephoneNumber}</span>
             </div>
             <div className="detail-item">
               <label>Gender:</label>
               <span>{farmer.gender || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Is Samurdhi Beneficiary:</label>
-              <span>{farmer.isSamurdhiBeneficiary ? "Yes" : "No"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Is Disabled</label>
-              <span>{farmer.isDisabled ? "Yes" : "No"}</span>
             </div>
           </div>
         </div>
@@ -109,7 +97,7 @@ const FarmerDetail: React.FC = () => {
           <div className="detail-grid">
             <div className="detail-item full-width">
               <label>Address:</label>
-              <span>{farmer.address}</span>
+              <span>{farmer.address || "-"}</span>
             </div>
             <div className="detail-item">
               <label>District:</label>
@@ -119,13 +107,126 @@ const FarmerDetail: React.FC = () => {
               <label>Village Name:</label>
               <span>{farmer.villageName || "-"}</span>
             </div>
+            <div className="detail-item">
+              <label>Province Code:</label>
+              <span>{farmer.provinceCode || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>DSD Division:</label>
+              <span>{farmer.dsdDivision || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>ASC Division:</label>
+              <span>{farmer.ascDivision || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>AI Range:</label>
+              <span>{farmer.aiRange || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Grama Niladhari Division:</label>
+              <span>{farmer.gramaNiladhariDivision || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Cascade Name:</label>
+              <span>{farmer.cascadeName || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Tank or VIS Name:</label>
+              <span>{farmer.tankOrVisName || "-"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="detail-section">
+          <h3>Organization Details</h3>
+          <div className="detail-grid">
+            <div className="detail-item">
+              <label>Producer Society:</label>
+              <span>{farmer.producerSociety || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Farmer Organization Name:</label>
+              <span>{farmer.farmerOrganizationName || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Command Area (Ha):</label>
+              <span>{farmer.commandAreaHa || "-"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="detail-section">
+          <h3>Personal Status</h3>
+          <div className="detail-grid">
+            <div className="detail-item">
+              <label>Samurdhi Beneficiary:</label>
+              <span>{farmer.isSamurdhiBeneficiary ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Woman Headed Household:</label>
+              <span>{farmer.isWomanHeadedHousehold ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Person with Disability:</label>
+              <span>{farmer.isDisabled ? "Yes" : "No"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="detail-section">
+          <h3>Agricultural Activities</h3>
+          <div className="detail-grid">
+            <div className="detail-item">
+              <label>CSA Conducted:</label>
+              <span>{farmer.isCsaConducted ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>IEC Conducted:</label>
+              <span>{farmer.isIecConducted ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>FTS Training:</label>
+              <span>{farmer.ftsTraining ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>FBS Training:</label>
+              <span>{farmer.fbsTraining ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Crop Diversification:</label>
+              <span>{farmer.csaCropDiversification ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Seed Production:</label>
+              <span>{farmer.csaSeedProduction ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Interseason:</label>
+              <span>{farmer.csaInterseason ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Micro Irrigation:</label>
+              <span>{farmer.csaMicroIrrigation ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Home Gardening:</label>
+              <span>{farmer.csaHomeGardening ? "Yes" : "No"}</span>
+            </div>
+            <div className="detail-item">
+              <label>CSA Agronomic Interventions:</label>
+              <span>{farmer.csaAgronomicInterventions ? "Yes" : "No"}</span>
+            </div>
           </div>
         </div>
 
         <div className="detail-section">
           <h3>Associated Data</h3>
           <div className="associated-links">
-            <Link to={`/equipment?farmerId=${farmer.farmerId}`} className="btn btn-outline">
+            <Link
+              to={`/equipment?farmerId=${farmer.farmerId}`}
+              className="btn btn-outline"
+            >
               View Equipment
             </Link>
             <Link
@@ -140,10 +241,16 @@ const FarmerDetail: React.FC = () => {
             >
               View CSA Agriculture
             </Link>
-            <Link to={`/agro-wells?farmerId=${farmer.farmerId}`} className="btn btn-outline">
+            <Link
+              to={`/agro-wells?farmerId=${farmer.farmerId}`}
+              className="btn btn-outline"
+            >
               View Agro Wells
             </Link>
-            <Link to={`/poultry?farmerId=${farmer.farmerId}`} className="btn btn-outline">
+            <Link
+              to={`/poultry?farmerId=${farmer.farmerId}`}
+              className="btn btn-outline"
+            >
               View Poultry Farming
             </Link>
           </div>

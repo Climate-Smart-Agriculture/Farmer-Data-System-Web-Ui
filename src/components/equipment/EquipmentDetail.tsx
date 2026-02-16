@@ -58,7 +58,7 @@ const EquipmentDetail: React.FC = () => {
     return <div className="error-banner">Equipment not found</div>;
   }
 
-  const formatBoolean = (value?: number) => (value === 1 ? "Yes" : "No");
+  const formatBoolean = (value?: string) => (value === "1" ? "Yes" : "No");
   const formatNumber = (value?: number) =>
     value !== undefined ? value.toLocaleString() : "-";
   const formatCurrency = (value?: number) =>
@@ -84,8 +84,16 @@ const EquipmentDetail: React.FC = () => {
           <h3>Basic Information</h3>
           <div className="detail-grid">
             <div className="detail-item">
-              <label>Equipment ID</label>
-              <span>{equipment.equipmentId || "-"}</span>
+              <label>Equipment Record ID</label>
+              <span>{equipment.equipmentRecordPk || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Record ID</label>
+              <span>{equipment.recordId || "-"}</span>
+            </div>
+            <div className="detail-item">
+              <label>Farmer ID</label>
+              <span>{equipment.farmerId || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Year</label>
@@ -134,40 +142,9 @@ const EquipmentDetail: React.FC = () => {
               <label>Village Name</label>
               <span>{equipment.villageName || "-"}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Farmer Information */}
-        <div className="detail-section">
-          <h3>Farmer Information</h3>
-          <div className="detail-grid">
-            <div className="detail-item">
-              <label>Farmer Name</label>
-              <span>{equipment.farmerName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>NIC Number</label>
-              <span>{equipment.nicNumber || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Address</label>
-              <span>{equipment.address || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Telephone Number</label>
-              <span>{equipment.telephoneNumber || "-"}</span>
-            </div>
             <div className="detail-item">
               <label>Farmer Organization</label>
               <span>{equipment.farmerOrganizationName || "-"}</span>
-            </div>
-            <div className="detail-item">
-              <label>Female</label>
-              <span>{formatBoolean(equipment.isFemale)}</span>
-            </div>
-            <div className="detail-item">
-              <label>Male</label>
-              <span>{formatBoolean(equipment.isMale)}</span>
             </div>
           </div>
         </div>
@@ -181,28 +158,40 @@ const EquipmentDetail: React.FC = () => {
               <span>{equipment.equipmentName || "-"}</span>
             </div>
             <div className="detail-item">
+              <label>Equipment Name Standard</label>
+              <span>{equipment.equipmentNameStandard || "-"}</span>
+            </div>
+            <div className="detail-item">
               <label>Number of Equipment</label>
               <span>{formatNumber(equipment.noOfEquipment)}</span>
+            </div>
+            <div className="detail-item">
+              <label>Replicated</label>
+              <span>{formatBoolean(equipment.isReplicated)}</span>
+            </div>
+            <div className="detail-item">
+              <label>Step Approval Number</label>
+              <span>{equipment.stepApprovalNumber || "-"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Extent and Cost Information */}
+        <div className="detail-section">
+          <h3>Extent and Cost Information</h3>
+          <div className="detail-grid">
+            <div className="detail-item">
+              <label>Descriptive Extent (Ha)</label>
+              <span>{equipment.descriptiveExtentHa || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Extent (Ha)</label>
               <span>{equipment.extentHa || "-"}</span>
             </div>
             <div className="detail-item">
-              <label>Step Approval Number</label>
-              <span>{equipment.stepApprovalNumber || "-"}</span>
+              <label>Descriptive Unit Price (Rs)</label>
+              <span>{equipment.descriptiveUnitPriceRs || "-"}</span>
             </div>
-            <div className="detail-item">
-              <label>Replicated</label>
-              <span>{formatBoolean(equipment.isReplicated)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Cost Information */}
-        <div className="detail-section">
-          <h3>Cost Information</h3>
-          <div className="detail-grid">
             <div className="detail-item">
               <label>Unit Price</label>
               <span>{formatCurrency(equipment.unitPriceRs)}</span>
@@ -210,6 +199,10 @@ const EquipmentDetail: React.FC = () => {
             <div className="detail-item">
               <label>Total Project Cost</label>
               <span>{formatCurrency(equipment.totalProjectCostRs)}</span>
+            </div>
+            <div className="detail-item">
+              <label>Descriptive Farmer Cost (Rs)</label>
+              <span>{equipment.descriptiveFarmerCostRs || "-"}</span>
             </div>
             <div className="detail-item">
               <label>Farmer Cost</label>

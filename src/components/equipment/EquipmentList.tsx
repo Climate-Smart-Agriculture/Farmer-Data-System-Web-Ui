@@ -14,39 +14,22 @@ interface FilterOption {
 
 const FILTER_OPTIONS: FilterOption[] = [
   { key: "farmerId", label: "Farmer ID", type: "text" },
-  { key: "nicNumber", label: "NIC", type: "text" },
-  { key: "farmerName", label: "Farmer Name", type: "text" },
-  { key: "district", label: "District", type: "text" },
-  { key: "villageName", label: "Village Name", type: "text" },
-  { key: "equipmentName", label: "Equipment Name", type: "text" },
+  { key: "recordId", label: "Record ID", type: "text" },
+  { key: "year", label: "Year", type: "text" },
   { key: "programName", label: "Program Name", type: "text" },
-  { key: "year", label: "Year", type: "number" },
+  { key: "district", label: "District", type: "text" },
   { key: "dsdDivision", label: "DSD Division", type: "text" },
   { key: "ascDivision", label: "ASC Division", type: "text" },
   { key: "cascadeName", label: "Cascade Name", type: "text" },
   { key: "farmerOrganizationName", label: "Farmer Organization", type: "text" },
   { key: "aiRange", label: "AI Range", type: "text" },
   { key: "gramaNiladhariDivision", label: "GN Division", type: "text" },
-  { key: "stepApprovalNumber", label: "Step Approval Number", type: "text" },
+  { key: "villageName", label: "Village Name", type: "text" },
+  { key: "equipmentName", label: "Equipment Name", type: "text" },
   {
-    key: "isFemale",
-    label: "Female",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
-  },
-  {
-    key: "isMale",
-    label: "Male",
-    type: "select",
-    options: [
-      { value: "", label: "All" },
-      { value: "1", label: "Yes" },
-      { value: "0", label: "No" },
-    ],
+    key: "equipmentNameStandard",
+    label: "Equipment Name Standard",
+    type: "text",
   },
   {
     key: "isReplicated",
@@ -58,6 +41,32 @@ const FILTER_OPTIONS: FilterOption[] = [
       { value: "0", label: "No" },
     ],
   },
+  { key: "noOfEquipment", label: "No. of Equipment", type: "number" },
+  {
+    key: "descriptiveExtentHa",
+    label: "Descriptive Extent (Ha)",
+    type: "text",
+  },
+  { key: "extentHa", label: "Extent (Ha)", type: "number" },
+  { key: "stepApprovalNumber", label: "Step Approval Number", type: "text" },
+  {
+    key: "descriptiveUnitPriceRs",
+    label: "Descriptive Unit Price (Rs)",
+    type: "text",
+  },
+  { key: "unitPriceRs", label: "Unit Price (Rs)", type: "number" },
+  {
+    key: "totalProjectCostRs",
+    label: "Total Project Cost (Rs)",
+    type: "number",
+  },
+  {
+    key: "descriptiveFarmerCostRs",
+    label: "Descriptive Farmer Cost (Rs)",
+    type: "text",
+  },
+  { key: "farmerCostRs", label: "Farmer Cost (Rs)", type: "number" },
+  { key: "provinceCode", label: "Province Code", type: "text" },
 ];
 
 interface FilterValues {
@@ -79,8 +88,8 @@ const EquipmentList: React.FC = () => {
   const [error, setError] = useState("");
   const [visibleFilters, setVisibleFilters] = useState<string[]>(
     farmerIdFromUrl
-      ? ["farmerId", "nicNumber", "farmerName", "district", "equipmentName"]
-      : ["nicNumber", "farmerName", "district", "equipmentName"],
+      ? ["farmerId", "recordId", "district", "equipmentName"]
+      : ["recordId", "district", "equipmentName"],
   );
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
@@ -94,14 +103,18 @@ const EquipmentList: React.FC = () => {
     setError("");
     try {
       const filter: Partial<Equipment> = {
-        farmerId: filterValues.farmerId || "",
-        nicNumber: filterValues.nicNumber || "",
-        farmerName: filterValues.farmerName || "",
+        farmerId: filterValues.farmerId
+          ? Number(filterValues.farmerId)
+          : undefined,
+        recordId: filterValues.recordId
+          ? Number(filterValues.recordId)
+          : undefined,
         district: filterValues.district || "",
         villageName: filterValues.villageName || "",
         equipmentName: filterValues.equipmentName || "",
+        equipmentNameStandard: filterValues.equipmentNameStandard || "",
         programName: filterValues.programName || "",
-        year: filterValues.year ? Number(filterValues.year) : undefined,
+        year: filterValues.year || undefined,
         dsdDivision: filterValues.dsdDivision || "",
         ascDivision: filterValues.ascDivision || "",
         cascadeName: filterValues.cascadeName || "",
@@ -109,12 +122,25 @@ const EquipmentList: React.FC = () => {
         aiRange: filterValues.aiRange || "",
         gramaNiladhariDivision: filterValues.gramaNiladhariDivision || "",
         stepApprovalNumber: filterValues.stepApprovalNumber || "",
-        isFemale: filterValues.isFemale
-          ? Number(filterValues.isFemale)
+        provinceCode: filterValues.provinceCode || "",
+        isReplicated: filterValues.isReplicated || undefined,
+        noOfEquipment: filterValues.noOfEquipment
+          ? Number(filterValues.noOfEquipment)
           : undefined,
-        isMale: filterValues.isMale ? Number(filterValues.isMale) : undefined,
-        isReplicated: filterValues.isReplicated
-          ? Number(filterValues.isReplicated)
+        descriptiveExtentHa: filterValues.descriptiveExtentHa || "",
+        extentHa: filterValues.extentHa
+          ? Number(filterValues.extentHa)
+          : undefined,
+        descriptiveUnitPriceRs: filterValues.descriptiveUnitPriceRs || "",
+        unitPriceRs: filterValues.unitPriceRs
+          ? Number(filterValues.unitPriceRs)
+          : undefined,
+        totalProjectCostRs: filterValues.totalProjectCostRs
+          ? Number(filterValues.totalProjectCostRs)
+          : undefined,
+        descriptiveFarmerCostRs: filterValues.descriptiveFarmerCostRs || "",
+        farmerCostRs: filterValues.farmerCostRs
+          ? Number(filterValues.farmerCostRs)
           : undefined,
       };
       const result = await equipmentService.getAllEquipments(
@@ -298,12 +324,12 @@ const EquipmentList: React.FC = () => {
             <thead>
               <tr>
                 <th>Actions</th>
+                <th>Record ID</th>
                 <th>Year</th>
                 <th>Program</th>
                 <th>District</th>
-                <th>Farmer Name</th>
-                <th>NIC</th>
                 <th>Equipment Name</th>
+                <th>Equipment Name Standard</th>
                 <th>No. of Equipment</th>
                 <th>Unit Price (Rs)</th>
                 <th>Total Cost (Rs)</th>
@@ -319,21 +345,21 @@ const EquipmentList: React.FC = () => {
                 </tr>
               ) : (
                 equipments.map((equipment) => (
-                  <tr key={equipment.equipmentId}>
+                  <tr key={equipment.equipmentRecordPk}>
                     <td>
                       <Link
-                        to={`/equipment/${equipment.equipmentId}`}
+                        to={`/equipment/${equipment.equipmentRecordPk}`}
                         className="btn-link"
                       >
                         View
                       </Link>
                     </td>
+                    <td>{equipment.recordId}</td>
                     <td>{equipment.year}</td>
                     <td>{equipment.programName}</td>
                     <td>{equipment.district}</td>
-                    <td>{equipment.farmerName}</td>
-                    <td>{equipment.nicNumber}</td>
                     <td>{equipment.equipmentName}</td>
+                    <td>{equipment.equipmentNameStandard}</td>
                     <td>{equipment.noOfEquipment}</td>
                     <td>{equipment.unitPriceRs?.toLocaleString()}</td>
                     <td>{equipment.totalProjectCostRs?.toLocaleString()}</td>
