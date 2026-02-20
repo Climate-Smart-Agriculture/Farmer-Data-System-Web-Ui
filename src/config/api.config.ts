@@ -1,5 +1,6 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "/api";
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api";
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
@@ -64,6 +65,14 @@ export const API_ENDPOINTS = {
     BASE: "/admin/users",
     BY_ID: (id: string | number) => `/admin/users/${id}`,
     BY_ROLE: (role: string) => `/admin/users/role/${role}`,
+  },
+  // Dashboard endpoints
+  DASHBOARD: {
+    SUMMARY: "/dashboard/summary",
+    DISTRICTS: "/dashboard/districts",
+    DISTRICT_STATISTICS: "/dashboard/districts/statistics",
+    BY_DISTRICT: (district: string) =>
+      `/dashboard/districts/${encodeURIComponent(district)}`,
   },
 };
 
