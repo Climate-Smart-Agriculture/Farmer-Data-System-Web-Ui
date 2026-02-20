@@ -370,3 +370,27 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
+
+// Dashboard Types
+export interface DashboardSummary {
+  totalFarmers: number;
+  totalEquipment: number;
+  totalHomeGardens: number;
+  totalCsaAgriculture: number;
+  totalAgroWells: number;
+  totalPoultryFarms: number;
+  totalLandArea: number;
+  totalYieldKg: number;
+}
+
+export interface DistrictStatistics {
+  district: string;
+  farmerCount: number;
+  equipmentCount: number;
+  homeGardenCount: number;
+  csaAgricultureCount: number;
+  agroWellCount: number;
+  poultryFarmCount: number;
+  totalYieldKg: number;
+  totalIncomeRs: number;
+}
